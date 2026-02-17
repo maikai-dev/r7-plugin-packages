@@ -1,0 +1,195 @@
+{
+  "schema_version": "1.0.0",
+  "generated_at": "2026-02-17T02:03:27.950Z",
+  "source": {
+    "provider": "gitverse",
+    "owner": "Maikai",
+    "repo": "r7-plugin-packages",
+    "branch": "master",
+    "plugins_root": "plugins"
+  },
+  "total": 4,
+  "plugins": [
+    {
+      "plugin_id": "mini-date-inserter",
+      "guid": "{3EE4D6E9-5C77-4237-AF2A-0B713A6D9A67}",
+      "name": "Mini Date Inserter",
+      "summary": "Вставка даты и времени в документ",
+      "category": "productivity",
+      "tags": [
+        "date",
+        "insert"
+      ],
+      "icon_url": "https://gitverse.ru/Maikai/r7-plugin-packages/raw/master/plugins/mini-date-inserter/assets/icon.svg",
+      "manifest_url": "https://gitverse.ru/Maikai/r7-plugin-packages/raw/master/plugins/mini-date-inserter/plugin-manifest.json",
+      "changelog_url": "https://gitverse.ru/Maikai/r7-plugin-packages/raw/master/plugins/mini-date-inserter/CHANGELOG.md",
+      "homepage_url": "https://gitverse.ru/Maikai/r7-plugin-packages",
+      "latest_version": "1.0.0",
+      "min_manager_version": "0.1.0",
+      "compatibility": {
+        "r7_min": "7.5.0",
+        "r7_max": "9.x"
+      },
+      "package_url": "https://gitverse.ru/Maikai/r7-plugin-packages/raw/master/plugins/mini-date-inserter/1.0.0/config.json",
+      "checksum": {
+        "algorithm": "sha256",
+        "value": "6fa03343ade73b80534959afb61253022c0e224a3765d0e0ce0f64db8923e17c"
+      },
+      "release_date": "2026-02-17",
+      "updated_at": "2026-02-17T00:00:00.000Z",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "package_url": "https://gitverse.ru/Maikai/r7-plugin-packages/raw/master/plugins/mini-date-inserter/1.0.0/config.json",
+          "checksum": {
+            "algorithm": "sha256",
+            "value": "6fa03343ade73b80534959afb61253022c0e224a3765d0e0ce0f64db8923e17c"
+          },
+          "release_date": "2026-02-17",
+          "min_manager_version": "0.1.0",
+          "r7_compatibility": {
+            "min": "7.5.0",
+            "max": "9.x"
+          },
+          "changelog": "Initial release"
+        }
+      ]
+    },
+    {
+      "plugin_id": "mini-random-quote",
+      "guid": "{AD55F89B-B07A-4D46-B55E-43543C612E2D}",
+      "name": "Mini Random Quote",
+      "summary": "Вставка случайной короткой цитаты",
+      "category": "fun",
+      "tags": [
+        "quote",
+        "text"
+      ],
+      "icon_url": "https://gitverse.ru/Maikai/r7-plugin-packages/raw/master/plugins/mini-random-quote/assets/icon.svg",
+      "manifest_url": "https://gitverse.ru/Maikai/r7-plugin-packages/raw/master/plugins/mini-random-quote/plugin-manifest.json",
+      "changelog_url": "https://gitverse.ru/Maikai/r7-plugin-packages/raw/master/plugins/mini-random-quote/CHANGELOG.md",
+      "homepage_url": "https://gitverse.ru/Maikai/r7-plugin-packages",
+      "latest_version": "1.0.0",
+      "min_manager_version": "0.1.0",
+      "compatibility": {
+        "r7_min": "7.5.0",
+        "r7_max": "9.x"
+      },
+      "package_url": "https://gitverse.ru/Maikai/r7-plugin-packages/raw/master/plugins/mini-random-quote/1.0.0/config.json",
+      "checksum": {
+        "algorithm": "sha256",
+        "value": "65b8457665ae3c2549d4dfe907d2141027061ba848cbca4ac70d5c97d0cd48cd"
+      },
+      "release_date": "2026-02-17",
+      "updated_at": "2026-02-17T00:00:00.000Z",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "package_url": "https://gitverse.ru/Maikai/r7-plugin-packages/raw/master/plugins/mini-random-quote/1.0.0/config.json",
+          "checksum": {
+            "algorithm": "sha256",
+            "value": "65b8457665ae3c2549d4dfe907d2141027061ba848cbca4ac70d5c97d0cd48cd"
+          },
+          "release_date": "2026-02-17",
+          "min_manager_version": "0.1.0",
+          "r7_compatibility": {
+            "min": "7.5.0",
+            "max": "9.x"
+          },
+          "changelog": "Initial release"
+        }
+      ]
+    },
+    {
+      "plugin_id": "mini-text-case",
+      "guid": "{6C8FD4A4-845C-4131-B38D-684E164297F2}",
+      "name": "Mini Text Case",
+      "summary": "Преобразование регистра текста",
+      "category": "productivity",
+      "tags": [
+        "text",
+        "formatter"
+      ],
+      "icon_url": "https://gitverse.ru/Maikai/r7-plugin-packages/raw/master/plugins/mini-text-case/assets/icon.svg",
+      "manifest_url": "https://gitverse.ru/Maikai/r7-plugin-packages/raw/master/plugins/mini-text-case/plugin-manifest.json",
+      "changelog_url": "https://gitverse.ru/Maikai/r7-plugin-packages/raw/master/plugins/mini-text-case/CHANGELOG.md",
+      "homepage_url": "https://gitverse.ru/Maikai/r7-plugin-packages",
+      "latest_version": "1.0.0",
+      "min_manager_version": "0.1.0",
+      "compatibility": {
+        "r7_min": "7.5.0",
+        "r7_max": "9.x"
+      },
+      "package_url": "https://gitverse.ru/Maikai/r7-plugin-packages/raw/master/plugins/mini-text-case/1.0.0/config.json",
+      "checksum": {
+        "algorithm": "sha256",
+        "value": "1d8d1b342d3b74ebacbc7ff0b2dd2c027ed88ca060cd6087bab2b8d69a6d1dfc"
+      },
+      "release_date": "2026-02-17",
+      "updated_at": "2026-02-17T00:00:00.000Z",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "package_url": "https://gitverse.ru/Maikai/r7-plugin-packages/raw/master/plugins/mini-text-case/1.0.0/config.json",
+          "checksum": {
+            "algorithm": "sha256",
+            "value": "1d8d1b342d3b74ebacbc7ff0b2dd2c027ed88ca060cd6087bab2b8d69a6d1dfc"
+          },
+          "release_date": "2026-02-17",
+          "min_manager_version": "0.1.0",
+          "r7_compatibility": {
+            "min": "7.5.0",
+            "max": "9.x"
+          },
+          "changelog": "Initial release"
+        }
+      ]
+    },
+    {
+      "plugin_id": "mini-word-counter",
+      "guid": "{D95D0B96-C777-4A29-8201-D76F43FA88A1}",
+      "name": "Mini Word Counter",
+      "summary": "Подсчет слов/символов в выделенном тексте",
+      "category": "productivity",
+      "tags": [
+        "text",
+        "analytics"
+      ],
+      "icon_url": "https://gitverse.ru/Maikai/r7-plugin-packages/raw/master/plugins/mini-word-counter/assets/icon.svg",
+      "manifest_url": "https://gitverse.ru/Maikai/r7-plugin-packages/raw/master/plugins/mini-word-counter/plugin-manifest.json",
+      "changelog_url": "https://gitverse.ru/Maikai/r7-plugin-packages/raw/master/plugins/mini-word-counter/CHANGELOG.md",
+      "homepage_url": "https://gitverse.ru/Maikai/r7-plugin-packages",
+      "latest_version": "1.0.0",
+      "min_manager_version": "0.1.0",
+      "compatibility": {
+        "r7_min": "7.5.0",
+        "r7_max": "9.x"
+      },
+      "package_url": "https://gitverse.ru/Maikai/r7-plugin-packages/raw/master/plugins/mini-word-counter/1.0.0/config.json",
+      "checksum": {
+        "algorithm": "sha256",
+        "value": "3b970d571ef4e4bc521676a7c82a978ab3bc91a8030d2eb54face86b08a2dff5"
+      },
+      "release_date": "2026-02-17",
+      "updated_at": "2026-02-17T00:00:00.000Z",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "package_url": "https://gitverse.ru/Maikai/r7-plugin-packages/raw/master/plugins/mini-word-counter/1.0.0/config.json",
+          "checksum": {
+            "algorithm": "sha256",
+            "value": "3b970d571ef4e4bc521676a7c82a978ab3bc91a8030d2eb54face86b08a2dff5"
+          },
+          "release_date": "2026-02-17",
+          "min_manager_version": "0.1.0",
+          "r7_compatibility": {
+            "min": "7.5.0",
+            "max": "9.x"
+          },
+          "changelog": "Initial release"
+        }
+      ]
+    }
+  ],
+  "registry_sha256": "daaab771e9b033b4b62150ba1f0b1f61068843ceedbf9779dee12da251ec3b8c"
+}

@@ -1,0 +1,26 @@
+{
+  "name": "Mini Random Quote",
+  "guid": "{AD55F89B-B07A-4D46-B55E-43543C612E2D}",
+  "version": "1.0.0",
+  "baseUrl": "https://gitverse.ru/Maikai/r7-plugin-packages/raw/master/plugins/mini-random-quote/1.0.0/",
+  "variations": [
+    {
+      "description": "Insert random short quote",
+      "url": "index.html",
+      "icons": [
+        "https://gitverse.ru/Maikai/r7-plugin-packages/raw/master/plugins/mini-random-quote/assets/icon.svg"
+      ],
+      "isViewer": true,
+      "EditorsSupport": [
+        "word",
+        "cell",
+        "slide",
+        "pdf"
+      ],
+      "isVisual": true,
+      "isModal": false,
+      "isInsideMode": false,
+      "initDataType": "none"
+    }
+  ]
+}

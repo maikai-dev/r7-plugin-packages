@@ -1,0 +1,36 @@
+{
+  "schema_version": "1.0.0",
+  "plugin_id": "mini-word-counter",
+  "guid": "{D95D0B96-C777-4A29-8201-D76F43FA88A1}",
+  "name": "Mini Word Counter",
+  "summary": "Подсчет слов/символов в выделенном тексте",
+  "description": "Мини-плагин для быстрого подсчета слов и символов в текущем фрагменте.",
+  "author": "Maikai",
+  "homepage_url": "https://gitverse.ru/Maikai/r7-plugin-packages",
+  "category": "productivity",
+  "tags": [
+    "text",
+    "analytics"
+  ],
+  "icon_path": "./assets/icon.svg",
+  "screenshots": [],
+  "changelog_path": "./CHANGELOG.md",
+  "latest_version": "1.0.0",
+  "compatibility": {
+    "r7_min": "7.5.0",
+    "r7_max": "9.x"
+  },
+  "versions": {
+    "1.0.0": {
+      "release_date": "2026-02-17",
+      "package_path": "./1.0.0/config.json",
+      "checksum_sha256": "3b970d571ef4e4bc521676a7c82a978ab3bc91a8030d2eb54face86b08a2dff5",
+      "min_manager_version": "0.1.0",
+      "r7_compatibility": {
+        "min": "7.5.0",
+        "max": "9.x"
+      },
+      "changelog": "Initial release"
+    }
+  }
+}

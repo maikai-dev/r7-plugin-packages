@@ -1,0 +1,36 @@
+{
+  "schema_version": "1.0.0",
+  "plugin_id": "mini-text-case",
+  "guid": "{6C8FD4A4-845C-4131-B38D-684E164297F2}",
+  "name": "Mini Text Case",
+  "summary": "Преобразование регистра текста",
+  "description": "Мини-плагин для преобразования текста в верхний/нижний/Title регистр.",
+  "author": "Maikai",
+  "homepage_url": "https://gitverse.ru/Maikai/r7-plugin-packages",
+  "category": "productivity",
+  "tags": [
+    "text",
+    "formatter"
+  ],
+  "icon_path": "./assets/icon.svg",
+  "screenshots": [],
+  "changelog_path": "./CHANGELOG.md",
+  "latest_version": "1.0.0",
+  "compatibility": {
+    "r7_min": "7.5.0",
+    "r7_max": "9.x"
+  },
+  "versions": {
+    "1.0.0": {
+      "release_date": "2026-02-17",
+      "package_path": "./1.0.0/config.json",
+      "checksum_sha256": "1d8d1b342d3b74ebacbc7ff0b2dd2c027ed88ca060cd6087bab2b8d69a6d1dfc",
+      "min_manager_version": "0.1.0",
+      "r7_compatibility": {
+        "min": "7.5.0",
+        "max": "9.x"
+      },
+      "changelog": "Initial release"
+    }
+  }
+}

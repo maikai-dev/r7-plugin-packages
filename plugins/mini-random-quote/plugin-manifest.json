@@ -1,0 +1,36 @@
+{
+  "schema_version": "1.0.0",
+  "plugin_id": "mini-random-quote",
+  "guid": "{AD55F89B-B07A-4D46-B55E-43543C612E2D}",
+  "name": "Mini Random Quote",
+  "summary": "Вставка случайной короткой цитаты",
+  "description": "Мини-плагин для добавления случайной цитаты в документ.",
+  "author": "Maikai",
+  "homepage_url": "https://gitverse.ru/Maikai/r7-plugin-packages",
+  "category": "fun",
+  "tags": [
+    "quote",
+    "text"
+  ],
+  "icon_path": "./assets/icon.svg",
+  "screenshots": [],
+  "changelog_path": "./CHANGELOG.md",
+  "latest_version": "1.0.0",
+  "compatibility": {
+    "r7_min": "7.5.0",
+    "r7_max": "9.x"
+  },
+  "versions": {
+    "1.0.0": {
+      "release_date": "2026-02-17",
+      "package_path": "./1.0.0/config.json",
+      "checksum_sha256": "65b8457665ae3c2549d4dfe907d2141027061ba848cbca4ac70d5c97d0cd48cd",
+      "min_manager_version": "0.1.0",
+      "r7_compatibility": {
+        "min": "7.5.0",
+        "max": "9.x"
+      },
+      "changelog": "Initial release"
+    }
+  }
+}

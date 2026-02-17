@@ -1,0 +1,38 @@
+body {
+  margin: 0;
+  font-family: "Segoe UI", sans-serif;
+  background: #f6f6f6;
+  color: #1e1e1e;
+}
+.shell {
+  padding: 16px;
+}
+h1 {
+  font-size: 18px;
+  margin: 0 0 12px;
+}
+textarea {
+  width: 100%;
+  min-height: 120px;
+  border-radius: 8px;
+  border: 1px solid #c6c6c6;
+  padding: 10px;
+  box-sizing: border-box;
+  background: #fff;
+}
+.actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+button {
+  border: none;
+  border-radius: 8px;
+  padding: 9px 12px;
+  cursor: pointer;
+  background: #00a4f6;
+  color: #fff;
+}
+button#insertQuote {
+  background: #3a3a3a;
+}
