@@ -1,6 +1,6 @@
 {
   "schema_version": "2.0.0",
-  "generated_at": "2026-02-18T14:51:13.684Z",
+  "generated_at": "2026-02-18T15:57:24.919Z",
   "source": {
     "provider": "gitverse",
     "owner": "Maikai",
@@ -12,7 +12,7 @@
   "plugins": [
     {
       "plugin_id": "mini-date-inserter",
-      "guid": "{3EE4D6E9-5C77-4237-AF2A-0B713A6D9A67}",
+      "guid": "asc.{3EE4D6E9-5C77-4237-AF2A-0B713A6D9A67}",
       "name": "Mini Date Inserter",
       "summary": "Вставка даты и времени в документ",
       "category": "productivity",
@@ -39,7 +39,7 @@
     },
     {
       "plugin_id": "mini-random-quote",
-      "guid": "{AD55F89B-B07A-4D46-B55E-43543C612E2D}",
+      "guid": "asc.{AD55F89B-B07A-4D46-B55E-43543C612E2D}",
       "name": "Mini Random Quote",
       "summary": "Вставка случайной короткой цитаты",
       "category": "fun",
@@ -66,7 +66,7 @@
     },
     {
       "plugin_id": "mini-text-case",
-      "guid": "{6C8FD4A4-845C-4131-B38D-684E164297F2}",
+      "guid": "asc.{6C8FD4A4-845C-4131-B38D-684E164297F2}",
       "name": "Mini Text Case",
       "summary": "Преобразование регистра текста",
       "category": "productivity",
@@ -93,7 +93,7 @@
     },
     {
       "plugin_id": "mini-word-counter",
-      "guid": "{D95D0B96-C777-4A29-8201-D76F43FA88A1}",
+      "guid": "asc.{D95D0B96-C777-4A29-8201-D76F43FA88A1}",
       "name": "Mini Word Counter",
       "summary": "Подсчет слов/символов в выделенном тексте",
       "category": "productivity",
@@ -119,5 +119,5 @@
       "updated_at": "2026-02-17T00:00:00.000Z"
     }
   ],
-  "registry_sha256": "17bbace890f22f7def720006358a726f566ab040be48977307ba47ea90339607"
+  "registry_sha256": "50634dc198c77675e0e5ab5cb7fc7ba562f77f2a123b5944ab92f5d8a85caa04"
 }

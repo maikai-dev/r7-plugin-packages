@@ -1,14 +1,14 @@
 {
   "name": "Mini Text Case",
-  "guid": "{6C8FD4A4-845C-4131-B38D-684E164297F2}",
+  "guid": "asc.{6C8FD4A4-845C-4131-B38D-684E164297F2}",
   "version": "1.0.0",
-  "baseUrl": "https://gitverse.ru/Maikai/r7-plugin-packages/raw/master/plugins/mini-text-case/1.0.0/",
+  "baseUrl": "",
   "variations": [
     {
       "description": "Convert selected text case",
       "url": "index.html",
       "icons": [
-        "https://gitverse.ru/Maikai/r7-plugin-packages/raw/master/plugins/mini-text-case/assets/icon.svg"
+        "../assets/icon.svg"
       ],
       "isViewer": true,
       "EditorsSupport": [

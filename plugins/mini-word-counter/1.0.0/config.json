@@ -1,14 +1,14 @@
 {
   "name": "Mini Word Counter",
-  "guid": "{D95D0B96-C777-4A29-8201-D76F43FA88A1}",
+  "guid": "asc.{D95D0B96-C777-4A29-8201-D76F43FA88A1}",
   "version": "1.0.0",
-  "baseUrl": "https://gitverse.ru/Maikai/r7-plugin-packages/raw/master/plugins/mini-word-counter/1.0.0/",
+  "baseUrl": "",
   "variations": [
     {
       "description": "Count words and characters in selected text",
       "url": "index.html",
       "icons": [
-        "https://gitverse.ru/Maikai/r7-plugin-packages/raw/master/plugins/mini-word-counter/assets/icon.svg"
+        "../assets/icon.svg"
       ],
       "isViewer": true,
       "EditorsSupport": [

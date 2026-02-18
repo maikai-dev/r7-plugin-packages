@@ -1,14 +1,14 @@
 {
   "name": "Mini Date Inserter",
-  "guid": "{3EE4D6E9-5C77-4237-AF2A-0B713A6D9A67}",
+  "guid": "asc.{3EE4D6E9-5C77-4237-AF2A-0B713A6D9A67}",
   "version": "1.0.0",
-  "baseUrl": "https://gitverse.ru/Maikai/r7-plugin-packages/raw/master/plugins/mini-date-inserter/1.0.0/",
+  "baseUrl": "",
   "variations": [
     {
       "description": "Insert current date and time",
       "url": "index.html",
       "icons": [
-        "https://gitverse.ru/Maikai/r7-plugin-packages/raw/master/plugins/mini-date-inserter/assets/icon.svg"
+        "../assets/icon.svg"
       ],
       "isViewer": true,
       "EditorsSupport": [
