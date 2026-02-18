@@ -1,6 +1,6 @@
 {
   "schema_version": "2.0.0",
-  "generated_at": "2026-02-18T13:38:49.925Z",
+  "generated_at": "2026-02-18T14:51:13.684Z",
   "source": {
     "provider": "gitverse",
     "owner": "Maikai",
@@ -20,10 +20,14 @@
         "date",
         "insert"
       ],
-      "icon_url": "https://gitverse.ru/Maikai/r7-plugin-packages/raw/master/plugins/mini-date-inserter/assets/icon.svg",
-      "manifest_url": "https://gitverse.ru/Maikai/r7-plugin-packages/raw/master/plugins/mini-date-inserter/plugin-manifest.json",
-      "changelog_url": "https://gitverse.ru/Maikai/r7-plugin-packages/raw/master/plugins/mini-date-inserter/CHANGELOG.md",
-      "homepage_url": "https://gitverse.ru/Maikai/r7-plugin-packages",
+      "icon_path": "plugins/mini-date-inserter/assets/icon.svg",
+      "icon_url": "plugins/mini-date-inserter/assets/icon.svg",
+      "manifest_path": "plugins/mini-date-inserter/plugin-manifest.json",
+      "manifest_url": "plugins/mini-date-inserter/plugin-manifest.json",
+      "changelog_path": "plugins/mini-date-inserter/CHANGELOG.md",
+      "changelog_url": "plugins/mini-date-inserter/CHANGELOG.md",
+      "homepage_path": "",
+      "homepage_url": "",
       "latest_version": "1.0.0",
       "min_manager_version": "0.1.0",
       "compatibility": {
@@ -43,10 +47,14 @@
         "quote",
         "text"
       ],
-      "icon_url": "https://gitverse.ru/Maikai/r7-plugin-packages/raw/master/plugins/mini-random-quote/assets/icon.svg",
-      "manifest_url": "https://gitverse.ru/Maikai/r7-plugin-packages/raw/master/plugins/mini-random-quote/plugin-manifest.json",
-      "changelog_url": "https://gitverse.ru/Maikai/r7-plugin-packages/raw/master/plugins/mini-random-quote/CHANGELOG.md",
-      "homepage_url": "https://gitverse.ru/Maikai/r7-plugin-packages",
+      "icon_path": "plugins/mini-random-quote/assets/icon.svg",
+      "icon_url": "plugins/mini-random-quote/assets/icon.svg",
+      "manifest_path": "plugins/mini-random-quote/plugin-manifest.json",
+      "manifest_url": "plugins/mini-random-quote/plugin-manifest.json",
+      "changelog_path": "plugins/mini-random-quote/CHANGELOG.md",
+      "changelog_url": "plugins/mini-random-quote/CHANGELOG.md",
+      "homepage_path": "",
+      "homepage_url": "",
       "latest_version": "1.0.0",
       "min_manager_version": "0.1.0",
       "compatibility": {
@@ -66,10 +74,14 @@
         "text",
         "formatter"
       ],
-      "icon_url": "https://gitverse.ru/Maikai/r7-plugin-packages/raw/master/plugins/mini-text-case/assets/icon.svg",
-      "manifest_url": "https://gitverse.ru/Maikai/r7-plugin-packages/raw/master/plugins/mini-text-case/plugin-manifest.json",
-      "changelog_url": "https://gitverse.ru/Maikai/r7-plugin-packages/raw/master/plugins/mini-text-case/CHANGELOG.md",
-      "homepage_url": "https://gitverse.ru/Maikai/r7-plugin-packages",
+      "icon_path": "plugins/mini-text-case/assets/icon.svg",
+      "icon_url": "plugins/mini-text-case/assets/icon.svg",
+      "manifest_path": "plugins/mini-text-case/plugin-manifest.json",
+      "manifest_url": "plugins/mini-text-case/plugin-manifest.json",
+      "changelog_path": "plugins/mini-text-case/CHANGELOG.md",
+      "changelog_url": "plugins/mini-text-case/CHANGELOG.md",
+      "homepage_path": "",
+      "homepage_url": "",
       "latest_version": "1.0.0",
       "min_manager_version": "0.1.0",
       "compatibility": {
@@ -89,10 +101,14 @@
         "text",
         "analytics"
       ],
-      "icon_url": "https://gitverse.ru/Maikai/r7-plugin-packages/raw/master/plugins/mini-word-counter/assets/icon.svg",
-      "manifest_url": "https://gitverse.ru/Maikai/r7-plugin-packages/raw/master/plugins/mini-word-counter/plugin-manifest.json",
-      "changelog_url": "https://gitverse.ru/Maikai/r7-plugin-packages/raw/master/plugins/mini-word-counter/CHANGELOG.md",
-      "homepage_url": "https://gitverse.ru/Maikai/r7-plugin-packages",
+      "icon_path": "plugins/mini-word-counter/assets/icon.svg",
+      "icon_url": "plugins/mini-word-counter/assets/icon.svg",
+      "manifest_path": "plugins/mini-word-counter/plugin-manifest.json",
+      "manifest_url": "plugins/mini-word-counter/plugin-manifest.json",
+      "changelog_path": "plugins/mini-word-counter/CHANGELOG.md",
+      "changelog_url": "plugins/mini-word-counter/CHANGELOG.md",
+      "homepage_path": "",
+      "homepage_url": "",
       "latest_version": "1.0.0",
       "min_manager_version": "0.1.0",
       "compatibility": {
@@ -103,5 +119,5 @@
       "updated_at": "2026-02-17T00:00:00.000Z"
     }
   ],
-  "registry_sha256": "bfd4676c0dc9a57f69d4c2ea1df63323864ef9ad155bf49408a404b4e5701283"
+  "registry_sha256": "17bbace890f22f7def720006358a726f566ab040be48977307ba47ea90339607"
 }

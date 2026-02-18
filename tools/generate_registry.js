@@ -8,7 +8,6 @@ const OWNER = process.env.REGISTRY_OWNER || "Maikai";
 const REPO = process.env.REGISTRY_REPO || "r7-plugin-packages";
 const BRANCH = process.env.REGISTRY_BRANCH || "master";
 const PROVIDER = "gitverse";
-const BASE_RAW = `https://gitverse.ru/${OWNER}/${REPO}/raw/${BRANCH}`;
 
 const ROOT = path.resolve(__dirname, "..");
 const PLUGINS_DIR = path.join(ROOT, "plugins");
@@ -80,8 +79,8 @@ function stable(value) {
   return value;
 }
 
-function ensureUrl(basePath) {
-  return `${BASE_RAW}/${toPosix(basePath)}`;
+function toRegistryRef(basePath) {
+  return toPosix(basePath).replace(/^\/+/, "");
 }
 
 function buildPluginEntry(pluginDirName, currentProfile) {
@@ -122,7 +121,8 @@ function buildPluginEntry(pluginDirName, currentProfile) {
 
     return {
       version,
-      package_url: ensureUrl(path.posix.join("plugins", pluginDirName, normalizedRelativePackagePath.replace(/\\/g, "/"))),
+      package_path: toRegistryRef(path.posix.join("plugins", pluginDirName, normalizedRelativePackagePath.replace(/\\/g, "/"))),
+      package_url: toRegistryRef(path.posix.join("plugins", pluginDirName, normalizedRelativePackagePath.replace(/\\/g, "/"))),
       checksum: {
         algorithm: "sha256",
         value: checksum
@@ -144,6 +144,11 @@ function buildPluginEntry(pluginDirName, currentProfile) {
 
   const iconPath = (manifest.icon_path || "").replace(/^\.\//, "");
   const changelogPath = (manifest.changelog_path || "").replace(/^\.\//, "");
+  const homepagePath = (manifest.homepage_path || "").replace(/^\.\//, "");
+  const iconRef = iconPath ? toRegistryRef(path.posix.join("plugins", pluginDirName, iconPath)) : "";
+  const manifestRef = toRegistryRef(path.posix.join("plugins", pluginDirName, "plugin-manifest.json"));
+  const changelogRef = changelogPath ? toRegistryRef(path.posix.join("plugins", pluginDirName, changelogPath)) : "";
+  const homepageRef = homepagePath ? toRegistryRef(path.posix.join("plugins", pluginDirName, homepagePath)) : "";
 
   const compactEntry = {
     plugin_id: manifest.plugin_id,
@@ -152,10 +157,14 @@ function buildPluginEntry(pluginDirName, currentProfile) {
     summary: manifest.summary,
     category: manifest.category || "misc",
     tags: manifest.tags || [],
-    icon_url: iconPath ? ensureUrl(path.posix.join("plugins", pluginDirName, iconPath)) : "",
-    manifest_url: ensureUrl(path.posix.join("plugins", pluginDirName, "plugin-manifest.json")),
-    changelog_url: changelogPath ? ensureUrl(path.posix.join("plugins", pluginDirName, changelogPath)) : "",
-    homepage_url: manifest.homepage_url || `https://gitverse.ru/${OWNER}/${REPO}`,
+    icon_path: iconRef,
+    icon_url: iconRef,
+    manifest_path: manifestRef,
+    manifest_url: manifestRef,
+    changelog_path: changelogRef,
+    changelog_url: changelogRef,
+    homepage_path: homepageRef,
+    homepage_url: homepageRef,
     latest_version: manifest.latest_version,
     min_manager_version: (manifest.versions[manifest.latest_version] || {}).min_manager_version || "0.1.0",
     compatibility: manifest.compatibility || { r7_min: "7.5.0", r7_max: "9.x" },
