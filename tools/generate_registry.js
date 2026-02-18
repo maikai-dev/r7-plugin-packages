@@ -15,6 +15,12 @@ const PLUGINS_DIR = path.join(ROOT, "plugins");
 const REGISTRY_FILE = path.join(ROOT, "registry", "plugins-index.json");
 
 const syncChecksums = process.argv.includes("--sync-checksums");
+const profileArg = process.argv.find((arg) => arg.startsWith("--profile="));
+const profile = ((profileArg && profileArg.split("=")[1]) || "compact").trim().toLowerCase();
+
+function getSchemaVersion(currentProfile) {
+  return currentProfile === "full" ? "1.0.0" : "2.0.0";
+}
 
 function assert(condition, message) {
   if (!condition) {
@@ -32,6 +38,11 @@ function writeJson(filePath, data) {
 
 function sha256(content) {
   return crypto.createHash("sha256").update(content).digest("hex");
+}
+
+function readCanonicalTextBuffer(filePath) {
+  const text = fs.readFileSync(filePath, "utf8").replace(/\r\n/g, "\n");
+  return Buffer.from(text, "utf8");
 }
 
 function toPosix(filePath) {
@@ -73,7 +84,7 @@ function ensureUrl(basePath) {
   return `${BASE_RAW}/${toPosix(basePath)}`;
 }
 
-function buildPluginEntry(pluginDirName) {
+function buildPluginEntry(pluginDirName, currentProfile) {
   const pluginDir = path.join(PLUGINS_DIR, pluginDirName);
   const manifestPath = path.join(pluginDir, "plugin-manifest.json");
   assert(fs.existsSync(manifestPath), `Missing manifest: ${manifestPath}`);
@@ -97,8 +108,7 @@ function buildPluginEntry(pluginDirName) {
     const absolutePackagePath = path.join(pluginDir, normalizedRelativePackagePath);
     assert(fs.existsSync(absolutePackagePath), `Missing package file: ${absolutePackagePath}`);
 
-    const content = fs.readFileSync(absolutePackagePath);
-    const checksum = sha256(content);
+    const checksum = sha256(readCanonicalTextBuffer(absolutePackagePath));
 
     if (!versionMeta.checksum_sha256 || versionMeta.checksum_sha256 !== checksum) {
       if (syncChecksums) {
@@ -135,7 +145,7 @@ function buildPluginEntry(pluginDirName) {
   const iconPath = (manifest.icon_path || "").replace(/^\.\//, "");
   const changelogPath = (manifest.changelog_path || "").replace(/^\.\//, "");
 
-  return {
+  const compactEntry = {
     plugin_id: manifest.plugin_id,
     guid: manifest.guid,
     name: manifest.name,
@@ -149,15 +159,24 @@ function buildPluginEntry(pluginDirName) {
     latest_version: manifest.latest_version,
     min_manager_version: (manifest.versions[manifest.latest_version] || {}).min_manager_version || "0.1.0",
     compatibility: manifest.compatibility || { r7_min: "7.5.0", r7_max: "9.x" },
+    release_date: latestEntry.release_date,
+    updated_at: `${latestEntry.release_date}T00:00:00.000Z`
+  };
+
+  if (currentProfile === "compact") {
+    return compactEntry;
+  }
+
+  return {
+    ...compactEntry,
     package_url: latestEntry.package_url,
     checksum: latestEntry.checksum,
-    release_date: latestEntry.release_date,
-    updated_at: `${latestEntry.release_date}T00:00:00.000Z`,
     versions: versionEntries
   };
 }
 
 function main() {
+  assert(["compact", "full"].includes(profile), `Unsupported profile: ${profile}. Use compact or full`);
   assert(fs.existsSync(PLUGINS_DIR), `Missing plugins dir: ${PLUGINS_DIR}`);
 
   const pluginIds = fs
@@ -166,10 +185,10 @@ function main() {
     .map((entry) => entry.name)
     .sort();
 
-  const plugins = pluginIds.map(buildPluginEntry);
+  const plugins = pluginIds.map((pluginId) => buildPluginEntry(pluginId, profile));
 
   const registry = {
-    schema_version: "1.0.0",
+    schema_version: getSchemaVersion(profile),
     generated_at: new Date().toISOString(),
     source: {
       provider: PROVIDER,
@@ -190,7 +209,7 @@ function main() {
 
   fs.mkdirSync(path.dirname(REGISTRY_FILE), { recursive: true });
   writeJson(REGISTRY_FILE, finalRegistry);
-  console.log(`Generated ${toPosix(path.relative(ROOT, REGISTRY_FILE))} (${plugins.length} plugins)`);
+  console.log(`Generated ${toPosix(path.relative(ROOT, REGISTRY_FILE))} (${plugins.length} plugins, profile=${profile})`);
 }
 
 main();

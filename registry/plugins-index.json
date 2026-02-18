@@ -1,6 +1,6 @@
 {
-  "schema_version": "1.0.0",
-  "generated_at": "2026-02-17T02:04:50.845Z",
+  "schema_version": "2.0.0",
+  "generated_at": "2026-02-18T13:38:49.925Z",
   "source": {
     "provider": "gitverse",
     "owner": "Maikai",
@@ -30,30 +30,8 @@
         "r7_min": "7.5.0",
         "r7_max": "9.x"
       },
-      "package_url": "https://gitverse.ru/Maikai/r7-plugin-packages/raw/master/plugins/mini-date-inserter/1.0.0/config.json",
-      "checksum": {
-        "algorithm": "sha256",
-        "value": "6fa03343ade73b80534959afb61253022c0e224a3765d0e0ce0f64db8923e17c"
-      },
       "release_date": "2026-02-17",
-      "updated_at": "2026-02-17T00:00:00.000Z",
-      "versions": [
-        {
-          "version": "1.0.0",
-          "package_url": "https://gitverse.ru/Maikai/r7-plugin-packages/raw/master/plugins/mini-date-inserter/1.0.0/config.json",
-          "checksum": {
-            "algorithm": "sha256",
-            "value": "6fa03343ade73b80534959afb61253022c0e224a3765d0e0ce0f64db8923e17c"
-          },
-          "release_date": "2026-02-17",
-          "min_manager_version": "0.1.0",
-          "r7_compatibility": {
-            "min": "7.5.0",
-            "max": "9.x"
-          },
-          "changelog": "Initial release"
-        }
-      ]
+      "updated_at": "2026-02-17T00:00:00.000Z"
     },
     {
       "plugin_id": "mini-random-quote",
@@ -75,30 +53,8 @@
         "r7_min": "7.5.0",
         "r7_max": "9.x"
       },
-      "package_url": "https://gitverse.ru/Maikai/r7-plugin-packages/raw/master/plugins/mini-random-quote/1.0.0/config.json",
-      "checksum": {
-        "algorithm": "sha256",
-        "value": "65b8457665ae3c2549d4dfe907d2141027061ba848cbca4ac70d5c97d0cd48cd"
-      },
       "release_date": "2026-02-17",
-      "updated_at": "2026-02-17T00:00:00.000Z",
-      "versions": [
-        {
-          "version": "1.0.0",
-          "package_url": "https://gitverse.ru/Maikai/r7-plugin-packages/raw/master/plugins/mini-random-quote/1.0.0/config.json",
-          "checksum": {
-            "algorithm": "sha256",
-            "value": "65b8457665ae3c2549d4dfe907d2141027061ba848cbca4ac70d5c97d0cd48cd"
-          },
-          "release_date": "2026-02-17",
-          "min_manager_version": "0.1.0",
-          "r7_compatibility": {
-            "min": "7.5.0",
-            "max": "9.x"
-          },
-          "changelog": "Initial release"
-        }
-      ]
+      "updated_at": "2026-02-17T00:00:00.000Z"
     },
     {
       "plugin_id": "mini-text-case",
@@ -120,30 +76,8 @@
         "r7_min": "7.5.0",
         "r7_max": "9.x"
       },
-      "package_url": "https://gitverse.ru/Maikai/r7-plugin-packages/raw/master/plugins/mini-text-case/1.0.0/config.json",
-      "checksum": {
-        "algorithm": "sha256",
-        "value": "1d8d1b342d3b74ebacbc7ff0b2dd2c027ed88ca060cd6087bab2b8d69a6d1dfc"
-      },
       "release_date": "2026-02-17",
-      "updated_at": "2026-02-17T00:00:00.000Z",
-      "versions": [
-        {
-          "version": "1.0.0",
-          "package_url": "https://gitverse.ru/Maikai/r7-plugin-packages/raw/master/plugins/mini-text-case/1.0.0/config.json",
-          "checksum": {
-            "algorithm": "sha256",
-            "value": "1d8d1b342d3b74ebacbc7ff0b2dd2c027ed88ca060cd6087bab2b8d69a6d1dfc"
-          },
-          "release_date": "2026-02-17",
-          "min_manager_version": "0.1.0",
-          "r7_compatibility": {
-            "min": "7.5.0",
-            "max": "9.x"
-          },
-          "changelog": "Initial release"
-        }
-      ]
+      "updated_at": "2026-02-17T00:00:00.000Z"
     },
     {
       "plugin_id": "mini-word-counter",
@@ -165,31 +99,9 @@
         "r7_min": "7.5.0",
         "r7_max": "9.x"
       },
-      "package_url": "https://gitverse.ru/Maikai/r7-plugin-packages/raw/master/plugins/mini-word-counter/1.0.0/config.json",
-      "checksum": {
-        "algorithm": "sha256",
-        "value": "3b970d571ef4e4bc521676a7c82a978ab3bc91a8030d2eb54face86b08a2dff5"
-      },
       "release_date": "2026-02-17",
-      "updated_at": "2026-02-17T00:00:00.000Z",
-      "versions": [
-        {
-          "version": "1.0.0",
-          "package_url": "https://gitverse.ru/Maikai/r7-plugin-packages/raw/master/plugins/mini-word-counter/1.0.0/config.json",
-          "checksum": {
-            "algorithm": "sha256",
-            "value": "3b970d571ef4e4bc521676a7c82a978ab3bc91a8030d2eb54face86b08a2dff5"
-          },
-          "release_date": "2026-02-17",
-          "min_manager_version": "0.1.0",
-          "r7_compatibility": {
-            "min": "7.5.0",
-            "max": "9.x"
-          },
-          "changelog": "Initial release"
-        }
-      ]
+      "updated_at": "2026-02-17T00:00:00.000Z"
     }
   ],
-  "registry_sha256": "54b4d662a040f35b18393f17b7c344c49d9a3d1bee233333027073b46d048d0e"
+  "registry_sha256": "bfd4676c0dc9a57f69d4c2ea1df63323864ef9ad155bf49408a404b4e5701283"
 }
