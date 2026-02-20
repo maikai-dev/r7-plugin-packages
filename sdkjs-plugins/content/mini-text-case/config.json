@@ -1,0 +1,49 @@
+{
+  "name": "Mini Text Case",
+  "guid": "asc.{6C8FD4A4-845C-4131-B38D-684E164297F2}",
+  "version": "1.0.0",
+  "minVersion": "7.5.0",
+  "offered": "Maikai",
+  "variations": [
+    {
+      "description": "Convert selected text to upper, lower, or title case.",
+      "url": "index.html",
+      "icons": ["resources/light/icon.svg", "resources/light/icon.svg"],
+      "icons2": [
+        {
+          "style": "light",
+          "100%": { "normal": "resources/light/icon.svg" },
+          "125%": { "normal": "resources/light/icon.svg" },
+          "150%": { "normal": "resources/light/icon.svg" },
+          "175%": { "normal": "resources/light/icon.svg" },
+          "200%": { "normal": "resources/light/icon.svg" },
+          "*": { "normal": "resources/light/icon.svg" }
+        },
+        {
+          "style": "dark",
+          "100%": { "normal": "resources/dark/icon.svg" },
+          "125%": { "normal": "resources/dark/icon.svg" },
+          "150%": { "normal": "resources/dark/icon.svg" },
+          "175%": { "normal": "resources/dark/icon.svg" },
+          "200%": { "normal": "resources/dark/icon.svg" },
+          "*": { "normal": "resources/dark/icon.svg" }
+        }
+      ],
+      "isViewer": true,
+      "isDisplayedInViewer": true,
+      "EditorsSupport": ["word", "cell", "slide", "pdf"],
+      "isVisual": true,
+      "isModal": false,
+      "isInsideMode": false,
+      "initDataType": "none",
+      "buttons": [],
+      "store": {
+        "background": {
+          "light": "#00A4F6",
+          "dark": "#0030B2"
+        },
+        "categories": ["work"]
+      }
+    }
+  ]
+}

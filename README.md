@@ -1,38 +1,61 @@
-# r7-plugin-packages
+﻿# r7-plugin-packages
 
-Registry and package source for R7 Plugin Manager.
+ONLYOFFICE-compatible repository for the R7 Plugin Manager catalog.
 
-## Structure
+This repository follows the same backend layout as `onlyoffice.github.io`:
 
-- `registry/plugins-index.json` - generated catalog index
-- `plugins/<pluginId>/plugin-manifest.json` - version source of truth
-- `plugins/<pluginId>/<version>/config.json` - install config for version
-- `tools/generate_registry.js` - index generator
+- `store/config.json` - catalog index consumed by Plugin Manager.
+- `sdkjs-plugins/content/<plugin>/config.json` - plugin manifest consumed by Plugin Manager and editor runtime.
+- `sdkjs-plugins/content/<plugin>/` - plugin files (`index.html`, `code.js`, `style.css`, `CHANGELOG.md`, icons/resources).
+- `sdkjs-plugins/v1/` - ONLYOFFICE plugin SDK assets (`plugins.js`, `plugins-ui.js`, `plugins.css`, ...).
 
-## Registry Output Policy
+## Repository layout
 
-Generator emits mirror/proxy-friendly refs:
-
-- relative `manifest_path` / `manifest_url`
-- relative `icon_path` / `icon_url`
-- relative `changelog_path` / `changelog_url`
-- relative `package_path` / `package_url` (legacy/full)
-
-No absolute `gitverse.ru` runtime URLs are embedded in generated index.
-
-## Generate Registry
-
-```bash
-node tools/generate_registry.js --sync-checksums
+```text
+store/
+  config.json
+  README.md
+sdkjs-plugins/
+  README.md
+  v1/
+  content/
+    mini-date-inserter/
+    mini-random-quote/
+    mini-text-case/
+    mini-word-counter/
+plugins/
+registry/
+tools/
 ```
 
-Legacy full profile:
+`plugins/`, `registry/`, and `tools/` are left as legacy/internal folders.
+Runtime catalog for Plugin Manager is `store/config.json` + `sdkjs-plugins/content/*`.
 
-```bash
-node tools/generate_registry.js --profile=full --sync-checksums
-```
+## How Plugin Manager reads this repo
 
-## Notes
+1. Plugin Manager loads `store/config.json`.
+2. For each `name`, it loads `sdkjs-plugins/content/<name>/config.json`.
+3. It then loads plugin resources from the same folder.
+4. Install/update actions are executed by editor backend using that manifest.
 
-- `compact` profile (`2.0.0`) is default.
-- `full` profile (`1.0.0`) remains for backward compatibility.
+## Publish to GitVerse Pages
+
+Expected public base URL for manager backend:
+
+- `https://maikai.gitverse.site/r7-plugin-packages/`
+
+Required files on Pages:
+
+- `https://maikai.gitverse.site/r7-plugin-packages/store/config.json`
+- `https://maikai.gitverse.site/r7-plugin-packages/sdkjs-plugins/content/<plugin>/config.json`
+
+## Add a new plugin
+
+Use the same flow as ONLYOFFICE:
+
+1. Create `sdkjs-plugins/content/<plugin-name>/`.
+2. Add required files: `config.json`, `index.html`, `code.js`, `CHANGELOG.md` (and styles/resources).
+3. Add plugin entry to `store/config.json`.
+4. Commit and publish.
+
+Detailed instructions are in `store/README.md`.
