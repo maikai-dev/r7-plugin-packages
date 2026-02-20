@@ -1,25 +1,26 @@
 <!doctype html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Mini Word Counter</title>  <script type="text/javascript" src="../../v1/plugins.js"></script>
-  <script type="text/javascript" src="../../v1/plugins-ui.js"></script>
-  <link rel="stylesheet" href="../../v1/plugins.css">
+  <title>Mini Word Counter</title>
+  <script type="text/javascript" src="https://onlyoffice.github.io/sdkjs-plugins/v1/plugins.js"></script>
+  <script type="text/javascript" src="https://onlyoffice.github.io/sdkjs-plugins/v1/plugins-ui.js"></script>
+  <link rel="stylesheet" href="https://onlyoffice.github.io/sdkjs-plugins/v1/plugins.css">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <main class="shell">
     <h1>Word Counter</h1>
-    <textarea id="inputText" placeholder="Р’С‹РґРµР»РёС‚Рµ С‚РµРєСЃС‚ РІ РґРѕРєСѓРјРµРЅС‚Рµ РёР»Рё РІРІРµРґРёС‚Рµ РІСЂСѓС‡РЅСѓСЋ"></textarea>
+    <textarea id="inputText" placeholder="Select text in document or type manually"></textarea>
     <div class="actions">
-      <button id="fromSelection">РР· РІС‹РґРµР»РµРЅРёСЏ</button>
-      <button id="countBtn">РџРѕСЃС‡РёС‚Р°С‚СЊ</button>
+      <button id="fromSelection">From selection</button>
+      <button id="countBtn">Count</button>
     </div>
     <div class="stats">
-      <p>РЎР»РѕРІР°: <strong id="words">0</strong></p>
-      <p>РЎРёРјРІРѕР»С‹: <strong id="chars">0</strong></p>
-      <p>РЎРёРјРІРѕР»С‹ (Р±РµР· РїСЂРѕР±РµР»РѕРІ): <strong id="charsNoSpace">0</strong></p>
+      <p>Words: <strong id="words">0</strong></p>
+      <p>Characters: <strong id="chars">0</strong></p>
+      <p>Characters (no spaces): <strong id="charsNoSpace">0</strong></p>
     </div>
   </main>
   <script src="code.js"></script>

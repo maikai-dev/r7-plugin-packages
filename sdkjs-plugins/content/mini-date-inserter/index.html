@@ -1,26 +1,27 @@
 <!doctype html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Mini Date Inserter</title>  <script type="text/javascript" src="../../v1/plugins.js"></script>
-  <script type="text/javascript" src="../../v1/plugins-ui.js"></script>
-  <link rel="stylesheet" href="../../v1/plugins.css">
+  <title>Mini Date Inserter</title>
+  <script type="text/javascript" src="https://onlyoffice.github.io/sdkjs-plugins/v1/plugins.js"></script>
+  <script type="text/javascript" src="https://onlyoffice.github.io/sdkjs-plugins/v1/plugins-ui.js"></script>
+  <link rel="stylesheet" href="https://onlyoffice.github.io/sdkjs-plugins/v1/plugins.css">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <main class="shell">
     <h1>Date Inserter</h1>
-    <label for="formatSelect">Р¤РѕСЂРјР°С‚ РґР°С‚С‹</label>
+    <label for="formatSelect">Date format</label>
     <select id="formatSelect">
       <option value="iso">2026-02-17</option>
       <option value="ru">17.02.2026</option>
-      <option value="full">17 С„РµРІСЂР°Р»СЏ 2026, 10:30</option>
+      <option value="full">17 February 2026, 10:30</option>
     </select>
     <textarea id="preview" readonly></textarea>
     <div class="actions">
-      <button id="refresh">РћР±РЅРѕРІРёС‚СЊ</button>
-      <button id="insert">Р’СЃС‚Р°РІРёС‚СЊ РІ РґРѕРєСѓРјРµРЅС‚</button>
+      <button id="refresh">Refresh</button>
+      <button id="insert">Insert to document</button>
     </div>
   </main>
   <script src="code.js"></script>
