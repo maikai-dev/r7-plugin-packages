@@ -1,0 +1,36 @@
+{
+  "name": "Mini Date Inserter",
+  "guid": "asc.{3EE4D6E9-5C77-4237-AF2A-0B713A6D9A67}",
+  "version": "1.0.0",
+  "minVersion": "7.4.0",
+  "variations": [
+    {
+      "description": "Insert current date and time",
+      "url": "index.html",
+      "icons": [
+        "assets/icon.svg",
+        "assets/icon.svg"
+      ],
+      "isViewer": true,
+      "EditorsSupport": [
+        "word",
+        "cell",
+        "slide",
+        "pdf"
+      ],
+      "isVisual": true,
+      "isModal": false,
+      "isInsideMode": false,
+      "initDataType": "none",
+      "store": {
+        "background": {
+          "light": "#F1F1F1",
+          "dark": "#3A3A3A"
+        },
+        "categories": [
+          "work"
+        ]
+      }
+    }
+  ]
+}

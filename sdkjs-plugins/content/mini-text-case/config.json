@@ -1,0 +1,36 @@
+{
+  "name": "Mini Text Case",
+  "guid": "asc.{6C8FD4A4-845C-4131-B38D-684E164297F2}",
+  "version": "1.0.0",
+  "minVersion": "7.4.0",
+  "variations": [
+    {
+      "description": "Convert selected text case",
+      "url": "index.html",
+      "icons": [
+        "assets/icon.svg",
+        "assets/icon.svg"
+      ],
+      "isViewer": true,
+      "EditorsSupport": [
+        "word",
+        "cell",
+        "slide",
+        "pdf"
+      ],
+      "isVisual": true,
+      "isModal": false,
+      "isInsideMode": false,
+      "initDataType": "none",
+      "store": {
+        "background": {
+          "light": "#F1F1F1",
+          "dark": "#3A3A3A"
+        },
+        "categories": [
+          "work"
+        ]
+      }
+    }
+  ]
+}
