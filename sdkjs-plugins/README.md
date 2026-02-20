@@ -1,28 +1,24 @@
-﻿## Description
+## Description
 
-This folder follows the same structure as ONLYOFFICE `sdkjs-plugins`.
+ONLYOFFICE provides a style sheet for different interface elements. To adjust your plugin interface to the ONLYOFFICE style, connect the [plugin.css](v1/plugins.css) to your plugin's [index.html](https://api.onlyoffice.com/docs/plugin-and-macros/structure/entry-point/) file with the following link:
 
-## Structure
+`<link rel="stylesheet" href="https://onlyoffice.github.io/sdkjs-plugins/v1/plugins.css">`
 
-- `v1/`: ONLYOFFICE plugin SDK files (`plugins.js`, `plugins-ui.js`, `plugins.css`).
-- `content/`: plugin source folders used by Plugin Manager catalog.
+Plugin styles (controls) include:
 
-## Plugin folder minimum
+* Different types of buttons
+* Input controls (text area, text field, checkbox)
+* Label controls (header label, link label)
+* Combo box
+* Loader
 
-Each plugin folder in `content/<plugin>/` should contain:
+For more details and examples, please refer to the [ONLYOFFICE API documentation](https://api.onlyoffice.com/docs/plugin-and-macros/get-started/overview/).
 
-- `config.json`
-- `index.html`
-- `code.js`
-- `CHANGELOG.md`
+# Structure
 
-Optionally add styles, translations, icons, screenshots, and other resources.
+* [v1](v1): This directory contains the stylesheets and CSS files used for plugin customization and styling.
+* [content](content): This directory contains the code and resourses of all plugins in store. How to add your own plugin read [here](../store/).
 
-## Link from plugin pages
+## User feedback and support
 
-Use local SDK links in plugin HTML:
-
-```html
-<script type="text/javascript" src="../../v1/plugins.js"></script>
-<link rel="stylesheet" href="../../v1/plugins.css">
-```
+In case you have any issues, questions or suggestions, please visit our official forum:  [forum.onlyoffice.com](https://forum.onlyoffice.com/), or leave your feedback [here](https://github.com/ONLYOFFICE/onlyoffice.github.io/issues). 

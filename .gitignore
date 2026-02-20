@@ -1,1 +1,4 @@
-.DS_Store
+*.js.bak
+*.json.bak
+
+*node_modules*
