@@ -1,8 +1,8 @@
-{
+﻿{
   "name": "Mini Text Case",
   "guid": "asc.{6C8FD4A4-845C-4131-B38D-684E164297F2}",
   "version": "1.0.0",
-  "minVersion": "7.5.0",
+  "minVersion": "7.4.0",
   "offered": "Maikai",
   "variations": [
     {
@@ -47,3 +47,4 @@
     }
   ]
 }
+

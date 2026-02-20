@@ -1,8 +1,8 @@
-{
+﻿{
   "name": "Mini Random Quote",
   "guid": "asc.{AD55F89B-B07A-4D46-B55E-43543C612E2D}",
   "version": "1.0.0",
-  "minVersion": "7.5.0",
+  "minVersion": "7.4.0",
   "offered": "Maikai",
   "variations": [
     {
@@ -47,3 +47,4 @@
     }
   ]
 }
+
