@@ -224,11 +224,6 @@
 				});
 				break;
 			case 'install':
-				if (data.config && data.config.url && data.config.url.indexOf('https://maikai-dev.github.io/r7-plugin-packages/') === 0) {
-					let newBase = 'https://github.com/maikai-dev/r7-plugin-packages/tree/master/';
-					data.config.url = data.config.url.replace('https://maikai-dev.github.io/r7-plugin-packages/', newBase);
-					if (data.config.baseUrl) data.config.baseUrl = data.config.baseUrl.replace('https://maikai-dev.github.io/r7-plugin-packages/', newBase);
-				}
 				window.Asc.plugin.executeMethod('InstallPlugin', [data.config, data.guid], function (result) {
 					postMessage(normalizeHostActionResult('install', data.guid, false, result));
 				});
@@ -243,11 +238,6 @@
 					createWindow('warning');
 				break;
 			case 'update':
-				if (data.config && data.config.url && data.config.url.indexOf('https://maikai-dev.github.io/r7-plugin-packages/') === 0) {
-					let newBase = 'https://github.com/maikai-dev/r7-plugin-packages/tree/master/';
-					data.config.url = data.config.url.replace('https://maikai-dev.github.io/r7-plugin-packages/', newBase);
-					if (data.config.baseUrl) data.config.baseUrl = data.config.baseUrl.replace('https://maikai-dev.github.io/r7-plugin-packages/', newBase);
-				}
 				window.Asc.plugin.executeMethod('UpdatePlugin', [data.config, data.guid], function (result) {
 					postMessage(normalizeHostActionResult('update', data.guid, false, result));
 				});
