@@ -131,7 +131,7 @@ window.Asc = {
 
 const pos = location.href.indexOf('store/index.html'); // position for make substring
 const ioUrl = location.href.substring(0, pos);         // real IO URL
-const configUrl = (isLocal ? OOMarketplaceUrl : location.href.substring(0, pos)) + 'store/config.json'; // url to config.json (it's for desktop. we should use remote config)
+const configUrl = (isLocal ? OOMarketplaceUrl : location.href.substring(0, pos)) + 'store/config.json?_v=' + Date.now(); // url to config.json (it's for desktop. we should use remote config)
 
 // get translation file
 getTranslation();
@@ -486,6 +486,14 @@ function makeDesktopRequest(_url) {
 
 function sendMessage(message) {
 	// this function sends message to editor
+	if ((message.type === 'install' || message.type === 'update') && message.config) {
+		let domain = 'https://maikai-dev.github.io/r7-plugin-packages/';
+		if (message.config.url && message.config.url.indexOf(domain) === 0) {
+			let newBase = 'https://github.com/maikai-dev/r7-plugin-packages/tree/master/';
+			message.config.url = message.config.url.replace(domain, newBase).split('?')[0];
+			if (message.config.baseUrl) message.config.baseUrl = message.config.baseUrl.replace(domain, newBase);
+		}
+	}
 	parent.postMessage(JSON.stringify(message), '*');
 };
 
@@ -569,7 +577,7 @@ function getAllPluginsData(bFirstRender, bshowMarketplace) {
 			plugin.name = plugin;
 		}
 		let pluginUrl = (plugin.name.indexOf(":/\/") == -1) ? url + 'sdkjs-plugins/content/' + plugin.name + '/' : plugin.name;
-		let confUrl = pluginUrl + 'config.json';
+		let confUrl = pluginUrl + 'config.json?_v=' + Date.now();
 		makeRequest(confUrl, 'GET', null, null, true).then(
 			function (response) {
 				let config = JSON.parse(response);
