@@ -32,15 +32,67 @@
 	let BPluginReady = false;
 	let editorVersion = null;
 	let marketplaceURl = null;
+	let marketplaceRepo = '';
 	const OOMarketplaceUrl = 'https://maikai-dev.github.io/r7-plugin-packages/store/index.html';
+
+	function normalizeMarketplaceUrl(url) {
+		let value = (url || '').trim();
+		if (!value.length)
+			return '';
+		if (value === './store/index.html')
+			return value;
+		// External custom URL must point to the marketplace entrypoint.
+		if (!/\/store\/index\.html([?#].*)?$/i.test(value))
+			return '';
+		return value;
+	}
+
+	function normalizeMarketplaceRepo(value) {
+		let source = (value || '').trim();
+		if (!source.length)
+			return '';
+
+		let match = source.match(/^([A-Za-z0-9_.-]+)\/([A-Za-z0-9_.-]+)(?:#([A-Za-z0-9_.\-/]+))?$/);
+		if (!match) {
+			match = source.match(/^https?:\/\/github\.com\/([^\/\s]+)\/([^\/\s#?]+)(?:\/tree\/([^#?]+))?\/?$/i);
+		}
+		if (!match)
+			return '';
+
+		let owner = match[1];
+		let repo = match[2].replace(/\.git$/i, '');
+		let branch = (match[3] || 'main').replace(/\/+$/, '');
+		return owner + '/' + repo + '#' + branch;
+	}
+
+	function hasCustomSource() {
+		return !!marketplaceRepo || marketplaceURl !== OOMarketplaceUrl;
+	}
 	try {
 		// for incognito mode
-		marketplaceURl = localStorage.getItem('DeveloperMarketplaceUrl') || OOMarketplaceUrl;
+		let savedRepo = normalizeMarketplaceRepo(localStorage.getItem('DeveloperMarketplaceRepo'));
+		if (savedRepo.length) {
+			marketplaceRepo = savedRepo;
+			localStorage.setItem('DeveloperMarketplaceRepo', marketplaceRepo);
+			localStorage.removeItem('DeveloperMarketplaceUrl');
+		}
+		let savedUrl = localStorage.getItem('DeveloperMarketplaceUrl');
+		let normalizedUrl = normalizeMarketplaceUrl(savedUrl);
+		marketplaceURl = marketplaceRepo ? OOMarketplaceUrl : (normalizedUrl || OOMarketplaceUrl);
+		if (savedUrl && !normalizedUrl)
+			localStorage.removeItem('DeveloperMarketplaceUrl');
 	} catch (err) {
 		marketplaceURl = OOMarketplaceUrl;
 	}
 
+	function applyThemeClass(type) {
+		let mode = (type || '').indexOf('light') !== -1 ? 'light' : 'dark';
+		document.body.classList.remove('theme-type-light', 'theme-type-dark');
+		document.body.classList.add('theme-type-' + mode);
+	}
+
 	window.Asc.plugin.init = function () {
+		applyThemeClass(window.Asc.plugin.theme && window.Asc.plugin.theme.type);
 		window.Asc.plugin.executeMethod('ShowButton', ['developer', true, 'right']);
 		// resize window
 		window.Asc.plugin.resizeWindow(608, 600, 608, 600, 0, 0);
@@ -56,9 +108,46 @@
 		iframe.contentWindow.postMessage(JSON.stringify(message), '*');
 	};
 
+	function normalizeHostActionResult(action, guid, backup, result) {
+		if (result && typeof result === 'object' && typeof result.type === 'string') {
+			return result;
+		}
+
+		let isSuccess = (result === true) || (result && typeof result === 'object' && result.status === true);
+		if (isSuccess) {
+			switch (action) {
+				case 'install':
+					return { type: 'Installed', guid: guid };
+				case 'update':
+					return { type: 'Updated', guid: guid };
+				case 'remove':
+					return { type: 'Removed', guid: guid, backup: !!backup };
+				default:
+					return { type: 'Error', guid: guid, error: { message: 'Unknown successful operation result.' } };
+			}
+		}
+
+		let errorMessage = '';
+		if (typeof result === 'string' && result.length) {
+			errorMessage = result;
+		} else if (result && typeof result === 'object') {
+			if (typeof result.error === 'string' && result.error.length)
+				errorMessage = result.error;
+			else if (typeof result.message === 'string' && result.message.length)
+				errorMessage = result.message;
+		} else if (result === false) {
+			errorMessage = 'Operation returned false.';
+		}
+
+		if (!errorMessage.length)
+			errorMessage = 'Problem with plugin ' + action + '.';
+
+		return { type: 'Error', guid: guid || '', error: { message: errorMessage } };
+	}
+
 	function initPlugin() {
 		document.body.appendChild(iframe);
-		if (marketplaceURl !== OOMarketplaceUrl)
+		if (hasCustomSource())
 			document.getElementById('notification').classList.remove('hidden');
 
 		// send message that plugin is ready
@@ -120,6 +209,10 @@
 	window.addEventListener('message', function (message) {
 		// getting messages from marketplace
 		let data = JSON.parse(message.data);
+		if (!data || typeof data !== 'object' || !data.type) {
+			postMessage({ type: 'Error', error: { message: 'Unknown command payload from marketplace frame.' } });
+			return;
+		}
 
 		switch (data.type) {
 			case 'getInstalled':
@@ -131,8 +224,13 @@
 				});
 				break;
 			case 'install':
+				if (data.config && data.config.url && data.config.url.indexOf('https://maikai-dev.github.io/r7-plugin-packages/') === 0) {
+					let newBase = 'https://github.com/maikai-dev/r7-plugin-packages/tree/master/';
+					data.config.url = data.config.url.replace('https://maikai-dev.github.io/r7-plugin-packages/', newBase);
+					if (data.config.baseUrl) data.config.baseUrl = data.config.baseUrl.replace('https://maikai-dev.github.io/r7-plugin-packages/', newBase);
+				}
 				window.Asc.plugin.executeMethod('InstallPlugin', [data.config, data.guid], function (result) {
-					postMessage(result);
+					postMessage(normalizeHostActionResult('install', data.guid, false, result));
 				});
 				break;
 			case 'remove':
@@ -145,8 +243,13 @@
 					createWindow('warning');
 				break;
 			case 'update':
+				if (data.config && data.config.url && data.config.url.indexOf('https://maikai-dev.github.io/r7-plugin-packages/') === 0) {
+					let newBase = 'https://github.com/maikai-dev/r7-plugin-packages/tree/master/';
+					data.config.url = data.config.url.replace('https://maikai-dev.github.io/r7-plugin-packages/', newBase);
+					if (data.config.baseUrl) data.config.baseUrl = data.config.baseUrl.replace('https://maikai-dev.github.io/r7-plugin-packages/', newBase);
+				}
 				window.Asc.plugin.executeMethod('UpdatePlugin', [data.config, data.guid], function (result) {
-					postMessage(result);
+					postMessage(normalizeHostActionResult('update', data.guid, false, result));
 				});
 				break;
 			case 'showButton':
@@ -166,8 +269,9 @@
 	window.Asc.plugin.onThemeChanged = function (theme) {
 		// theme changed event
 		if (theme.type.indexOf('light') !== -1) {
-			theme['background-toolbar'] = '#fff';
+			theme['background-toolbar'] = '#f1f1f1';
 		}
+		applyThemeClass(theme.type);
 		window.Asc.plugin.onThemeChangedBase(theme);
 		let style = document.getElementsByTagName('head')[0].lastChild;
 		if (iframe && iframe.contentWindow)
@@ -284,12 +388,25 @@
 				developerWindow = new window.Asc.PluginWindow();
 				developerWindow.attachEvent('onWindowMessage', function (message) {
 					if (message.type == 'SetURL') {
-						if (message.url.length) {
-							marketplaceURl = message.url;
+						let source = message.url;
+						let customRepo = normalizeMarketplaceRepo(source);
+						let customUrl = normalizeMarketplaceUrl(source);
+						if (customRepo.length) {
+							marketplaceRepo = customRepo;
+							marketplaceURl = OOMarketplaceUrl;
+							localStorage.setItem('DeveloperMarketplaceRepo', marketplaceRepo);
+							localStorage.removeItem('DeveloperMarketplaceUrl');
+							document.getElementById('notification').classList.remove('hidden');
+						} else if (customUrl.length) {
+							marketplaceRepo = '';
+							marketplaceURl = customUrl;
+							localStorage.removeItem('DeveloperMarketplaceRepo');
 							localStorage.setItem('DeveloperMarketplaceUrl', marketplaceURl);
 							document.getElementById('notification').classList.remove('hidden');
 						} else {
+							marketplaceRepo = '';
 							marketplaceURl = OOMarketplaceUrl;
+							localStorage.removeItem('DeveloperMarketplaceRepo');
 							localStorage.removeItem('DeveloperMarketplaceUrl');
 							document.getElementById('notification').classList.add('hidden');
 						}
@@ -304,10 +421,12 @@
 	};
 
 	function removePlugin(backup) {
-		if (removeGuid)
+		if (removeGuid) {
+			let guid = removeGuid;
 			window.Asc.plugin.executeMethod('RemovePlugin', [removeGuid, backup], function (result) {
-				postMessage(result);
+				postMessage(normalizeHostActionResult('remove', guid, backup, result));
 			});
+		}
 
 		removeGuid = null;
 	};
