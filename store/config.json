@@ -3,8 +3,20 @@
     "name": "https://raw.githubusercontent.com/ONLYOFFICE/onlyoffice.github.io/master/sdkjs-plugins/content/wordscounter/",
     "discussion": ""
   },
-  { "name": "mini-date-inserter", "discussion": "" },
-  { "name": "mini-random-quote", "discussion": "" },
-  { "name": "mini-text-case", "discussion": "" },
-  { "name": "mini-word-counter", "discussion": "" }
+  {
+    "name": "mini-date-inserter",
+    "discussion": ""
+  },
+  {
+    "name": "mini-random-quote",
+    "discussion": ""
+  },
+  {
+    "name": "mini-text-case",
+    "discussion": ""
+  },
+  {
+    "name": "mini-word-counter",
+    "discussion": ""
+  }
 ]
