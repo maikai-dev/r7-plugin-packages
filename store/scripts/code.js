@@ -486,14 +486,6 @@ function makeDesktopRequest(_url) {
 
 function sendMessage(message) {
 	// this function sends message to editor
-	if ((message.type === 'install' || message.type === 'update') && message.config) {
-		let domain = 'https://maikai-dev.github.io/r7-plugin-packages/';
-		if (message.config.url && message.config.url.indexOf(domain) === 0) {
-			let newBase = 'https://github.com/maikai-dev/r7-plugin-packages/';
-			message.config.url = message.config.url.replace(domain, newBase).split('?')[0];
-			if (message.config.baseUrl) message.config.baseUrl = message.config.baseUrl.replace(domain, newBase);
-		}
-	}
 	parent.postMessage(JSON.stringify(message), '*');
 };
 
@@ -581,7 +573,7 @@ function getAllPluginsData(bFirstRender, bshowMarketplace) {
 		makeRequest(confUrl, 'GET', null, null, true).then(
 			function (response) {
 				let config = JSON.parse(response);
-				config.url = confUrl;
+				config.url = pluginUrl + 'config.json';
 				config.baseUrl = pluginUrl;
 				arr[i] = config;
 
