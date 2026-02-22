@@ -23,7 +23,7 @@ let isPluginLoading = false;                                         // flag plu
 let isOnline = true;                                                 // flag internet connection
 isLocal && checkInternet();                                          // check internet connection (only for desktop)
 let interval = null;                                                 // interval for checking internet connection (if it doesn't work on launch)
-const OOMarketplaceUrl = 'https://maikai-dev.github.io/r7-plugin-packages/';            // url to oficial store (for local version store in desktop)
+const OOMarketplaceUrl = 'https://raw.githubusercontent.com/maikai-dev/r7-plugin-packages/master/';            // url to oficial store (for local version store in desktop)
 const OOIO = 'https://github.com/maikai-dev/r7-plugin-packages/';  // url to oficial github repository (for links and discussions)
 const discussionsUrl = OOIO + 'discussions/';                        // discussions url
 let searchTimeout = null;                                            // timeot for search
