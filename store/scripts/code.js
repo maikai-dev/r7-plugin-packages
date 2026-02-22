@@ -131,7 +131,7 @@ window.Asc = {
 
 const pos = location.href.indexOf('store/index.html'); // position for make substring
 const ioUrl = location.href.substring(0, pos);         // real IO URL
-const configUrl = ioUrl + 'store/config.json'; // fix: force using local config
+const configUrl = OOMarketplaceUrl + 'store/config.json'; // fix: force using remote config
 
 // get translation file
 getTranslation();
@@ -562,7 +562,7 @@ function getAllPluginsData(bFirstRender, bshowMarketplace) {
 	isPluginLoading = true;
 	let count = 0;
 	let Unloaded = [];
-	let url = ioUrl; // fix: force using local url
+	let url = OOMarketplaceUrl; // fix: force using remote url
 	allPlugins.forEach(function (plugin, i, arr) {
 		count++;
 		if (typeof plugin !== 'object') {
