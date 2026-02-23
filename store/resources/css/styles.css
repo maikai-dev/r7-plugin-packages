@@ -1,24 +1,24 @@
 /* Plugin Manager storefront style aligned with xldb_front design language */
 
 :root {
-	--pm-bg-primary: #f1f1f1;
-	--pm-bg-secondary: transparent;
+	--pm-bg-primary: #ffffff;
+	--pm-bg-secondary: #f7f9fc;
 	--pm-bg-tertiary: #ffffff;
 	--pm-text-primary: #000000;
-	--pm-text-secondary: #3a3a3a;
-	--pm-text-muted: rgba(58, 58, 58, 0.72);
-	--pm-border: #e1e1e1;
-	--pm-border-soft: #e1e1e1;
+	--pm-text-secondary: #4d5563;
+	--pm-text-muted: rgba(77, 85, 99, 0.75);
+	--pm-border: #d8dee8;
+	--pm-border-soft: #e6ebf2;
 	--pm-accent: #00a4f6;
 	--pm-accent-strong: #fdb700;
 	--pm-warning: #fdb700;
-	--pm-button-neutral: #f1f1f1;
+	--pm-button-neutral: #ffffff;
 	--pm-button-neutral-text: #000000;
 	--pm-button-alt: transparent;
 	--pm-button-alt-text: #000000;
-	--pm-overlay: rgba(58, 58, 58, 0.24);
-	--pm-shadow-card: none;
-	--pm-shadow-hover: none;
+	--pm-overlay: rgba(58, 58, 58, 0.18);
+	--pm-shadow-card: 0 2px 8px rgba(17, 24, 39, 0.06);
+	--pm-shadow-hover: 0 6px 16px rgba(17, 24, 39, 0.12);
 	--pm-radius: 5px;
 }
 
@@ -256,12 +256,13 @@ body .div_item {
 	color: var(--pm-text-primary) !important;
 	border: 1px solid var(--pm-border) !important;
 	border-radius: var(--pm-radius);
-	max-width: 200px;
-	min-width: 200px;
-	margin: 0 16px 20px 0;
+	max-width: none;
+	min-width: 0;
+	width: 100%;
+	margin: 0;
 	position: relative;
 	min-height: 270px;
-	max-height: 270px;
+	max-height: none;
 	padding: 0 !important;
 	cursor: pointer;
 	overflow: hidden;

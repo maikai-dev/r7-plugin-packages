@@ -39,8 +39,8 @@ const guidSettings = 'asc.{8D67F3C5-7736-4BAE-A0F2-8C7127DC4BB8}';   // guid set
 let editorVersion = null;                                            // edior current version
 let loader;                                                          // loader
 let themePreference = getStoredThemePreference();
-let hostThemeType = 'light';
-let themeType = detectThemeType();                                   // current theme
+let hostThemeType = normalizeThemeType(detectThemeType());
+let themeType = resolveThemeType();                                  // current theme
 const lang = detectLanguage();                                       // current language
 const shortLang = lang.split('-')[0];                                // short language
 let bTranslate = false;                                              // flag translate or not
@@ -48,7 +48,7 @@ let isTranslationLoading = false;                                    // flag tra
 let isFrameLoading = true;                                           // flag window loading
 let translate = { 'Loading': 'Loading' };                              // translations for current language (thouse will necessary if we don't get tranlation file)
 let timeout = null;                                                  // delay for loader
-let defaultBG = themeType == 'light' ? "#F5F5F5" : '#555555';        // default background color for plugin header
+let defaultBG = themeType === 'light' ? '#F5F5F5' : '#555555';       // default background color for plugin header
 let isResizeOnStart = false;                                         // flag for firs resize on start
 let slideIndex = 1;                                                  // index for slides
 let PsMain = null;                                                   // scroll for list of plugins
@@ -156,6 +156,7 @@ window.onload = function () {
 	// init element
 	initElemnts();
 	initSettingsMenu();
+	applyThemeMode();
 	isFrameLoading = false;
 	onTranslate();
 
@@ -326,58 +327,9 @@ window.addEventListener('message', function (message) {
 			toogleLoader(false);
 			break;
 		case 'Theme':
-			if (message.theme.type)
-				hostThemeType = message.theme.type;
-
+			if (message.theme && message.theme.type)
+				hostThemeType = normalizeThemeType(message.theme.type);
 			applyThemeMode();
-			let rule = '.text-secondary{color:' + message.theme["text-secondary"] + ';}\n';
-
-			if (themeType.includes('light')) {
-				this.document.getElementsByTagName('body')[0].classList.add('white_bg');
-				rule += '.select2-container--default .select2-results__option[aria-selected=true] { color: black;}\n'
-				message.style = message.style.replace(/#445799/g, 'rgba(0, 0, 0, 0.8)');
-			} else {
-				this.document.getElementsByTagName('body')[0].classList.remove('white_bg');
-				rule += '.div_offered_votes{color: rgba(255,255,255,0.8) !important;}\n';
-				rule += '.select2-container--default .select2-results__option[aria-selected=true] { color: white;}\n';
-				message.style = message.style.replace('.select2-container--default .select2-results__option--highlighted[aria-selected] {background-color : #555 !important; }', '.select2-container--default .select2-results__option--highlighted[aria-selected] { background-color : #555 !important; color: white !important;}');
-				message.style = message.style.replace(/#b5e4ff/g, 'rgba(255, 255, 255, 0.8)');
-			}
-
-			let styleTheme = document.getElementById('theme_style');
-			if (!styleTheme) {
-				styleTheme = document.createElement('style');
-				styleTheme.id = 'theme_style';
-				styleTheme.type = 'text/css';
-				document.getElementsByTagName('head')[0].appendChild(styleTheme);
-			} else {
-				defaultBG = themeType == 'light' ? "#F5F5F5" : '#555555';
-				let bshowMarketplace = elements.btnMarketplace && elements.btnMarketplace.classList.contains('btn_toolbar_active');
-				let arrPl = bshowMarketplace ? allPlugins : installedPlugins;
-				arrPl.forEach(function (pl) {
-					let div = document.getElementById(pl.guid);
-					if (div) {
-						let variation = pl.variations ? pl.variations[0] : pl.obj.variations[0];
-						let bg = defaultBG;
-						if (variation.store) {
-							if (variation.store.background)
-								bg = variation.store.background[themeType]
-						} else {
-							// todo now we have one icon for all theme for plugins in store. change it when we will have different icons for different theme (now it's not necessary). use for all icons 'changeIcons'
-							// It's why we should change icons only for plugins with default icon or plugins icon (which don't have 'store' field in config)
-							div.firstChild.firstChild.setAttribute('src', getImageUrl(pl.guid, false, false, ('img_' + pl.guid)));
-						}
-						div.firstChild.setAttribute('style', ('background:' + bg));
-					}
-				});
-				let guid = elements.imgIcon.parentNode.parentNode.parentNode.getAttribute('data-guid');
-				if (guid)
-					elements.imgIcon.setAttribute('src', getImageUrl(guid, false, false, 'img_icon'));
-
-				// todo change header background color and change icons for plugin cards and for plugin window
-			}
-
-			styleTheme.innerHTML = message.style + rule;
 			break;
 		case 'onExternalMouseUp':
 			let evt = document.createEvent("MouseEvents");
@@ -523,6 +475,11 @@ function detectThemeType() {
 	// detect theme or return default
 	let type = getUrlSearchValue("theme-type");
 	return type || 'light';
+};
+
+function normalizeThemeType(type) {
+	let value = (type || '').toLowerCase();
+	return value.indexOf('light') !== -1 ? 'light' : 'dark';
 };
 
 function initElemnts() {
@@ -1992,9 +1949,9 @@ function getMarkedSetting() {
 function getStoredThemePreference() {
 	try {
 		let stored = localStorage.getItem('DeveloperThemePreference');
-		return isValidThemePreference(stored) ? stored : 'system';
+		return isValidThemePreference(stored) ? stored : 'light';
 	} catch (err) {
-		return 'system';
+		return 'light';
 	}
 };
 
@@ -2009,15 +1966,30 @@ function isValidThemePreference(val) {
 };
 
 function resolveThemeType() {
-	return themePreference === 'system' ? hostThemeType : themePreference;
+	return themePreference === 'system' ? normalizeThemeType(hostThemeType) : normalizeThemeType(themePreference);
 };
 
-function applyThemeCssOverrides(style) {
-	if (themeType === 'dark') {
+function applyThemeCssOverrides() {
+	if (themeType === 'dark')
 		document.body.classList.add('theme-type-dark');
-	} else {
+	else
 		document.body.classList.remove('theme-type-dark');
+
+	if (themeType === 'light')
+		document.body.classList.add('white_bg');
+	else
+		document.body.classList.remove('white_bg');
+
+	let styleTheme = document.getElementById('theme_style');
+	if (!styleTheme) {
+		styleTheme = document.createElement('style');
+		styleTheme.id = 'theme_style';
+		styleTheme.type = 'text/css';
+		document.getElementsByTagName('head')[0].appendChild(styleTheme);
 	}
+
+	let selectedColor = themeType === 'dark' ? '#ffffff' : '#000000';
+	styleTheme.innerHTML = '.select2-container--default .select2-results__option[aria-selected=true] { color: ' + selectedColor + '; }';
 };
 
 function syncThemeModeControl() {
@@ -2034,15 +2006,41 @@ function closeSettingsMenu() {
 
 function applyThemeMode() {
 	themeType = resolveThemeType();
-	defaultBG = themeType == 'light' ? '#F5F5F5' : '#555555';
+	defaultBG = themeType === 'light' ? '#F5F5F5' : '#555555';
 	if (window.Asc && window.Asc.plugin && window.Asc.plugin.theme)
 		window.Asc.plugin.theme.type = themeType;
 	syncThemeModeControl();
 	refreshThemeCardsAndIcons();
-	applyThemeCssOverrides('');
+	applyThemeCssOverrides();
 };
 
 function refreshThemeCardsAndIcons() {
+	let bshowMarketplace = elements.btnMarketplace && elements.btnMarketplace.classList.contains('btn_toolbar_active');
+	let arrPl = bshowMarketplace ? allPlugins : installedPlugins;
+	if (!Array.isArray(arrPl))
+		return;
+
+	arrPl.forEach(function (pl) {
+		let div = document.getElementById(pl.guid);
+		if (!div || !div.firstChild)
+			return;
+
+		let variation = pl.variations ? pl.variations[0] : (pl.obj && pl.obj.variations ? pl.obj.variations[0] : null);
+		let bg = defaultBG;
+		if (variation && variation.store && variation.store.background && variation.store.background[themeType]) {
+			bg = variation.store.background[themeType];
+		} else if (div.firstChild.firstChild) {
+			div.firstChild.firstChild.setAttribute('src', getImageUrl(pl.guid, false, false, ('img_' + pl.guid)));
+		}
+
+		div.firstChild.setAttribute('style', ('background:' + bg));
+	});
+
+	if (elements.imgIcon && elements.imgIcon.parentNode && elements.imgIcon.parentNode.parentNode && elements.imgIcon.parentNode.parentNode.parentNode) {
+		let guid = elements.imgIcon.parentNode.parentNode.parentNode.getAttribute('data-guid');
+		if (guid)
+			elements.imgIcon.setAttribute('src', getImageUrl(guid, false, false, 'img_icon'));
+	}
 };
 
 function initSettingsMenu() {
@@ -2060,7 +2058,7 @@ function initSettingsMenu() {
 		elements.selectThemeMode.addEventListener('change', function (event) {
 			let nextPreference = event.target.value;
 			if (!isValidThemePreference(nextPreference))
-				nextPreference = 'system';
+				nextPreference = 'light';
 			themePreference = nextPreference;
 			setStoredThemePreference(nextPreference);
 			applyThemeMode();
