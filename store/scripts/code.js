@@ -24,14 +24,12 @@ let isOnline = true;                                                 // flag int
 isLocal && checkInternet();                                          // check internet connection (only for desktop)
 let interval = null;                                                 // interval for checking internet connection (if it doesn't work on launch)
 const marketplaceSources = {
-	gitverse: 'https://maikai.gitverse.site/r7-plugin-packages/',
-	github: 'https://maikai-dev.github.io/r7-plugin-packages/'
+	gitverse: 'https://maikai.gitverse.site/r7-plugin-packages/'
 };
 const defaultMarketplaceSource = 'gitverse';
-const fallbackMarketplaceSource = 'github';
 let activeMarketplaceSource = detectMarketplaceSource();
 let OOMarketplaceUrl = marketplaceSources[activeMarketplaceSource] || marketplaceSources[defaultMarketplaceSource]; // url to custom store (for local version store in desktop)
-const OOIO = 'https://github.com/maikai-dev/r7-plugin-packages/';             // url to custom github repository (for links and discussions)
+const OOIO = 'https://gitverse.ru/Maikai/r7-plugin-packages/';                // url to custom repository (for links and discussions)
 const discussionsUrl = OOIO + 'discussions/';                        // discussions url
 let searchTimeout = null;                                            // timeot for search
 let founded = [];                                                    // last founded elemens (for not to redraw if a result is the same)
@@ -45,6 +43,8 @@ const guidMarkeplace = 'asc.{AA2EA9B6-9EC2-415F-9762-634EE8D9A95E}'; // guid mar
 const guidSettings = 'asc.{8D67F3C5-7736-4BAE-A0F2-8C7127DC4BB8}';   // guid settings plugins
 let editorVersion = null;                                            // edior current version
 let loader;                                                          // loader
+let themePreference = getStoredThemePreference();
+let hostThemeType = 'light';
 let themeType = detectThemeType();                                   // current theme
 const lang = detectLanguage();                                       // current language
 const shortLang = lang.split('-')[0];                                // short language
@@ -160,6 +160,7 @@ window.onload = function () {
 	}
 	// init element
 	initElemnts();
+	initSettingsMenu();
 	isFrameLoading = false;
 	onTranslate();
 
@@ -331,8 +332,9 @@ window.addEventListener('message', function (message) {
 			break;
 		case 'Theme':
 			if (message.theme.type)
-				themeType = message.theme.type;
+				hostThemeType = message.theme.type;
 
+			applyThemeMode();
 			let rule = '.text-secondary{color:' + message.theme["text-secondary"] + ';}\n';
 
 			if (themeType.includes('light')) {
@@ -540,11 +542,13 @@ function detectThemeType() {
 function initElemnts() {
 	elements.btnAvailablePl = document.getElementById('btn_AvailablePlugins');
 	elements.btnMarketplace = document.getElementById('btn_marketplace');
+	elements.btnSettings = document.getElementById('btn_settings');
+	elements.settingsMenu = document.getElementById('settings_menu');
+	elements.selectThemeMode = document.getElementById('select_theme_mode');
+	elements.settingsWrap = document.getElementsByClassName('settings_wrap')[0] || null;
 	elements.linkNewPlugin = document.getElementById('link_newPlugin');
 	elements.divBody = document.getElementById('div_body');
 	elements.divMain = document.getElementById('div_main');
-	// elements.arrow = document.getElementById('arrow');
-	// elements.close = document.getElementById('close');
 	elements.divHeader = document.getElementById('div_header');
 	elements.divSelected = document.getElementById('div_selected_toolbar');
 	elements.divSelectedMain = document.getElementById('div_selected_main');
@@ -1141,7 +1145,7 @@ function onClickItem() {
 		document.getElementById('div_changelog_preview').innerHTML = '';
 	}
 
-	let pluginUrl = plugin.baseUrl.replace(OOMarketplaceUrl, (OOIO + 'tree/master/'));
+	let pluginUrl = plugin.baseUrl.replace(OOMarketplaceUrl, (OOIO + 'content/master/'));
 
 	// TODO problem with plugins icons (different margin from top)
 	elements.divSelected.setAttribute('data-guid', guid);
@@ -1446,6 +1450,14 @@ function onTranslate() {
 	document.getElementById('span_min_ver_caption').innerHTML = getTranslated('The minimum supported editors version') + ': ';
 	document.getElementById('span_langs_caption').innerHTML = getTranslated('Languages') + ': ';
 	document.getElementById('span_categories').innerHTML = getTranslated('Categories');
+	if (document.getElementById('lbl_theme_mode')) {
+		document.getElementById('lbl_theme_mode').innerHTML = getTranslated('Theme');
+		document.getElementById('opt_theme_system').innerHTML = getTranslated('System');
+		document.getElementById('opt_theme_light').innerHTML = getTranslated('Light');
+		document.getElementById('opt_theme_dark').innerHTML = getTranslated('Dark');
+		if (elements.btnSettings) elements.btnSettings.innerHTML = getTranslated('Settings');
+	}
+
 	document.getElementById('opt_all').innerHTML = getTranslated('All');
 	document.getElementById('opt_rec').innerHTML = getTranslated('Recommended');
 	document.getElementById('opt_dev').innerHTML = getTranslated('Developer tools');
@@ -1808,12 +1820,6 @@ function changeAfterInstallOrRemove(bInstall, guid, bHasLocal) {
 };
 
 function checkInternet() {
-	let primarySource = activeMarketplaceSource;
-	let secondarySource = primarySource === fallbackMarketplaceSource ? defaultMarketplaceSource : fallbackMarketplaceSource;
-	let candidates = [primarySource];
-	if (secondarySource !== primarySource)
-		candidates.push(secondarySource);
-
 	let onSuccess = function () {
 		isOnline = true;
 		let bShowSelected = elements.divSelected && !elements.divSelected.classList.contains('hidden');
@@ -1834,28 +1840,17 @@ function checkInternet() {
 		interval = null;
 	};
 
-	let tryCandidate = function (index) {
-		if (index >= candidates.length)
-			return;
-		let source = candidates[index];
-		let url = marketplaceSources[source] + 'store/translations/langs.json?_v=' + Date.now();
-		makeRequest(url, 'GET', null, null, true).then(
-			function (response) {
-				// "Not found" HTML pages can return 200 on some hosts, so validate JSON body.
-				JSON.parse(response);
-				if (source !== activeMarketplaceSource)
-					applyMarketplaceSource(source);
-				onSuccess();
-			}
-		).catch(function () {
-			if (index + 1 < candidates.length)
-				tryCandidate(index + 1);
-			else
-				handeNoInternet();
-		});
-	};
-
-	tryCandidate(0);
+	let source = activeMarketplaceSource;
+	let url = marketplaceSources[source] + 'store/translations/langs.json?_v=' + Date.now();
+	makeRequest(url, 'GET', null, null, true).then(
+		function (response) {
+			// "Not found" HTML pages can return 200 on some hosts, so validate JSON body.
+			JSON.parse(response);
+			onSuccess();
+		}
+	).catch(function () {
+		handeNoInternet();
+	});
 };
 
 function handeNoInternet() {
@@ -2007,4 +2002,95 @@ function getMarkedSetting() {
 	}
 
 	return settings;
+};
+
+function getStoredThemePreference() {
+	try {
+		let stored = localStorage.getItem('DeveloperThemePreference');
+		return isValidThemePreference(stored) ? stored : 'system';
+	} catch (err) {
+		return 'system';
+	}
+};
+
+function setStoredThemePreference(val) {
+	try {
+		localStorage.setItem('DeveloperThemePreference', val);
+	} catch (err) { }
+};
+
+function isValidThemePreference(val) {
+	return val === 'system' || val === 'light' || val === 'dark';
+};
+
+function resolveThemeType() {
+	return themePreference === 'system' ? hostThemeType : themePreference;
+};
+
+function applyThemeCssOverrides(style) {
+	if (themeType === 'dark') {
+		document.body.classList.add('theme-type-dark');
+	} else {
+		document.body.classList.remove('theme-type-dark');
+	}
+};
+
+function syncThemeModeControl() {
+	if (elements.selectThemeMode) {
+		elements.selectThemeMode.value = themePreference;
+	}
+};
+
+function closeSettingsMenu() {
+	if (elements.settingsMenu && !elements.settingsMenu.classList.contains('hidden')) {
+		elements.settingsMenu.classList.add('hidden');
+	}
+};
+
+function applyThemeMode() {
+	themeType = resolveThemeType();
+	defaultBG = themeType == 'light' ? '#F5F5F5' : '#555555';
+	if (window.Asc && window.Asc.plugin && window.Asc.plugin.theme)
+		window.Asc.plugin.theme.type = themeType;
+	syncThemeModeControl();
+	refreshThemeCardsAndIcons();
+	applyThemeCssOverrides('');
+};
+
+function refreshThemeCardsAndIcons() {
+};
+
+function initSettingsMenu() {
+	if (!elements.btnSettings || !elements.settingsMenu)
+		return;
+	syncThemeModeControl();
+	elements.btnSettings.addEventListener('click', function (event) {
+		event.stopPropagation();
+		elements.settingsMenu.classList.toggle('hidden');
+	});
+	elements.settingsMenu.addEventListener('click', function (event) {
+		event.stopPropagation();
+	});
+	if (elements.selectThemeMode) {
+		elements.selectThemeMode.addEventListener('change', function (event) {
+			let nextPreference = event.target.value;
+			if (!isValidThemePreference(nextPreference))
+				nextPreference = 'system';
+			themePreference = nextPreference;
+			setStoredThemePreference(nextPreference);
+			applyThemeMode();
+			closeSettingsMenu();
+		});
+	}
+	document.addEventListener('click', function (event) {
+		if (!elements.settingsMenu || elements.settingsMenu.classList.contains('hidden'))
+			return;
+		let wrap = elements.settingsWrap || elements.settingsMenu.parentNode;
+		if (!wrap || !wrap.contains(event.target))
+			closeSettingsMenu();
+	});
+	document.addEventListener('keydown', function (event) {
+		if (event.key === 'Escape')
+			closeSettingsMenu();
+	});
 };

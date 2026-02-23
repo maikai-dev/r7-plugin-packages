@@ -35,8 +35,7 @@
 	let marketplaceRepo = '';
 	let marketplaceSource = '';
 	const marketplaceSources = {
-		gitverse: 'https://maikai.gitverse.site/r7-plugin-packages/store/index.html',
-		github: 'https://maikai-dev.github.io/r7-plugin-packages/store/index.html'
+		gitverse: 'https://maikai.gitverse.site/r7-plugin-packages/store/index.html'
 	};
 	const defaultMarketplaceSource = 'gitverse';
 
@@ -95,34 +94,7 @@
 	}
 
 	function resolveMarketplaceUrl(callback) {
-		let currentDefaultUrl = getDefaultMarketplaceUrl();
-		let shouldProbeDefaultUrl = marketplaceURl === currentDefaultUrl;
-		if (!shouldProbeDefaultUrl) {
-			callback(marketplaceURl || currentDefaultUrl);
-			return;
-		}
-
-		checkMarketplaceConfig(currentDefaultUrl, function (isValid) {
-			if (isValid) {
-				callback(currentDefaultUrl);
-				return;
-			}
-
-			let fallbackSource = marketplaceSource === 'gitverse' ? 'github' : 'gitverse';
-			let fallbackUrl = getMarketplaceUrlBySource(fallbackSource);
-			checkMarketplaceConfig(fallbackUrl, function (isFallbackValid) {
-				if (isFallbackValid) {
-					marketplaceSource = fallbackSource;
-					marketplaceURl = fallbackUrl;
-					try {
-						localStorage.setItem('DeveloperMarketplaceSource', marketplaceSource);
-					} catch (err) {
-						// nothing to do
-					}
-				}
-				callback(marketplaceURl || currentDefaultUrl);
-			});
-		});
+		callback(marketplaceURl || getDefaultMarketplaceUrl());
 	}
 
 	function normalizeMarketplaceUrl(url) {
@@ -143,9 +115,6 @@
 			return '';
 
 		let match = source.match(/^([A-Za-z0-9_.-]+)\/([A-Za-z0-9_.-]+)(?:#([A-Za-z0-9_.\-/]+))?$/);
-		if (!match) {
-			match = source.match(/^https?:\/\/github\.com\/([^\/\s]+)\/([^\/\s#?]+)(?:\/tree\/([^#?]+))?\/?$/i);
-		}
 		if (!match) {
 			match = source.match(/^https?:\/\/gitverse\.ru\/([^\/\s]+)\/([^\/\s#?]+)(?:\/content\/([^\/\s#?]+)(?:\/.*)?)?\/?$/i);
 		}
@@ -412,26 +381,7 @@
 
 		let current = marketplaceURl || getDefaultMarketplaceUrl();
 		checkSourceUrl(current, function (isOnline) {
-			if (isOnline) {
-				endInternetChecking(true);
-				return;
-			}
-			let fallbackSource = marketplaceSource === 'gitverse' ? 'github' : 'gitverse';
-			let fallbackUrl = getMarketplaceUrlBySource(fallbackSource);
-			checkSourceUrl(fallbackUrl, function (isFallbackOnline) {
-				if (isFallbackOnline) {
-					marketplaceSource = fallbackSource;
-					marketplaceURl = fallbackUrl;
-					try {
-						localStorage.setItem('DeveloperMarketplaceSource', marketplaceSource);
-					} catch (err) {
-						// nothing to do
-					}
-					endInternetChecking(true);
-					return;
-				}
-				endInternetChecking(false);
-			});
+			endInternetChecking(isOnline);
 		});
 
 		if (bSetTimeout) {
