@@ -23,12 +23,7 @@ let isPluginLoading = false;                                         // flag plu
 let isOnline = true;                                                 // flag internet connection
 isLocal && checkInternet();                                          // check internet connection (only for desktop)
 let interval = null;                                                 // interval for checking internet connection (if it doesn't work on launch)
-const marketplaceSources = {
-	gitverse: 'https://maikai.gitverse.site/r7-plugin-packages/'
-};
-const defaultMarketplaceSource = 'gitverse';
-let activeMarketplaceSource = detectMarketplaceSource();
-let OOMarketplaceUrl = marketplaceSources[activeMarketplaceSource] || marketplaceSources[defaultMarketplaceSource]; // url to custom store (for local version store in desktop)
+const OOMarketplaceUrl = 'https://maikai.gitverse.site/r7-plugin-packages/'; // url to custom store (for local version store in desktop)
 const OOIO = 'https://gitverse.ru/Maikai/r7-plugin-packages/';                // url to custom repository (for links and discussions)
 const discussionsUrl = OOIO + 'discussions/';                        // discussions url
 let searchTimeout = null;                                            // timeot for search
@@ -1840,8 +1835,7 @@ function checkInternet() {
 		interval = null;
 	};
 
-	let source = activeMarketplaceSource;
-	let url = marketplaceSources[source] + 'store/translations/langs.json?_v=' + Date.now();
+	let url = OOMarketplaceUrl + 'store/translations/langs.json?_v=' + Date.now();
 	makeRequest(url, 'GET', null, null, true).then(
 		function (response) {
 			// "Not found" HTML pages can return 200 on some hosts, so validate JSON body.

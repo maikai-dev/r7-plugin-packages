@@ -17,11 +17,12 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<link rel="stylesheet" href="https://onlyoffice.github.io/sdkjs-plugins/v1/plugins.css">
+	<link rel="stylesheet" href="../../v1/plugins.css">
+	<link rel="stylesheet" href="../resources/css/fonts.css">
 	<link rel="stylesheet" href="./resources/css/styles.css">
 	<link rel="stylesheet" href="vendor/select2-4.0.13/css/select2.css"/>
 	<script type="text/javascript" src="vendor/jquery/jquery-3.7.1.min.js"></script>
-	<script type="text/javascript" src="https://onlyoffice.github.io/sdkjs-plugins/v1/plugins-ui.js"></script>
+	<script type="text/javascript" src="../../v1/plugins-ui.js"></script>
 	<script type="text/javascript" src="scripts/polyfill.js"></script>
 	<script type="text/javascript" src="scripts/code.js"></script>
 	<script src="vendor/select2-4.0.13/js/select2.js"></script>
@@ -41,9 +42,22 @@
 						<button id="btn_AvailablePlugins" class="btn_menu btn_menu_left btn-text-default">Available plugins</button>
 						<button id="btn_marketplace" class="btn_menu btn_menu_right btn-text-default btn_toolbar_active">Marketplace</button>
 					</div>
-					<div class="toolbar_link">
-						<!-- TODO think about how to open the form for uploading -->
-						<a id="link_newPlugin" class="link_submit" target="blank" href="https://github.com/ONLYOFFICE/onlyoffice.github.io/pulls">Submit your own plugin</a>
+					<div class="toolbar_meta">
+						<div class="toolbar_link">
+							<!-- TODO think about how to open the form for uploading -->
+							<a id="link_newPlugin" class="link_submit" target="blank" href="https://github.com/maikai-dev/r7-plugin-packages/pulls">Submit your own plugin</a>
+						</div>
+						<div class="settings_wrap">
+							<button id="btn_settings" class="btn-text-default btn_settings" type="button">Settings</button>
+							<div id="settings_menu" class="settings_menu hidden">
+								<label id="lbl_theme_mode" class="settings_label" for="select_theme_mode">Theme</label>
+								<select id="select_theme_mode" class="form-control">
+									<option id="opt_theme_system" value="system">System</option>
+									<option id="opt_theme_light" value="light">Light</option>
+									<option id="opt_theme_dark" value="dark">Dark</option>
+								</select>
+							</div>
+						</div>
 					</div>
 				</div>
 				<div id="toolbar_tools" class="toolbar_tools">
