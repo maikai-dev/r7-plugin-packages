@@ -1850,6 +1850,8 @@ function checkInternet() {
 		).catch(function () {
 			if (index + 1 < candidates.length)
 				tryCandidate(index + 1);
+			else
+				handeNoInternet();
 		});
 	};
 
