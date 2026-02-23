@@ -33,7 +33,97 @@
 	let editorVersion = null;
 	let marketplaceURl = null;
 	let marketplaceRepo = '';
-	const OOMarketplaceUrl = 'https://maikai-dev.github.io/r7-plugin-packages/store/index.html';
+	let marketplaceSource = '';
+	const marketplaceSources = {
+		gitverse: 'https://maikai.gitverse.site/r7-plugin-packages/store/index.html',
+		github: 'https://maikai-dev.github.io/r7-plugin-packages/store/index.html'
+	};
+	const defaultMarketplaceSource = 'gitverse';
+
+	function normalizeMarketplaceSource(value) {
+		let source = (value || '').trim().toLowerCase();
+		return marketplaceSources[source] ? source : '';
+	}
+
+	function getMarketplaceUrlBySource(source) {
+		let normalized = normalizeMarketplaceSource(source) || defaultMarketplaceSource;
+		return marketplaceSources[normalized];
+	}
+
+	function getMarketplaceRoot(url) {
+		let value = (url || '').trim();
+		if (!value.length)
+			return '';
+		return value.replace(/\/store\/index\.html([?#].*)?$/i, '').replace(/\/+$/, '');
+	}
+
+	function buildMarketplaceAssetUrl(pageUrl, path) {
+		let root = getMarketplaceRoot(pageUrl);
+		return (root.length ? (root + '/') : '') + path.replace(/^\/+/, '');
+	}
+
+	function isMarketplaceConfigPayload(text) {
+		if (typeof text !== 'string' || !text.length)
+			return false;
+		try {
+			let parsed = JSON.parse(text);
+			return Array.isArray(parsed);
+		} catch (error) {
+			return false;
+		}
+	}
+
+	function checkMarketplaceConfig(url, callback) {
+		let xhr = new XMLHttpRequest();
+		xhr.open('GET', buildMarketplaceAssetUrl(url, 'store/config.json?_v=' + Date.now()), true);
+		xhr.timeout = 8000;
+		xhr.onload = function () {
+			let isSuccess = (xhr.status >= 200 && xhr.status < 300 && isMarketplaceConfigPayload(xhr.responseText));
+			callback(isSuccess);
+		};
+		xhr.onerror = function () {
+			callback(false);
+		};
+		xhr.ontimeout = function () {
+			callback(false);
+		};
+		xhr.send(null);
+	}
+
+	function getDefaultMarketplaceUrl() {
+		return getMarketplaceUrlBySource(marketplaceSource);
+	}
+
+	function resolveMarketplaceUrl(callback) {
+		let currentDefaultUrl = getDefaultMarketplaceUrl();
+		let shouldProbeDefaultUrl = marketplaceURl === currentDefaultUrl;
+		if (!shouldProbeDefaultUrl) {
+			callback(marketplaceURl || currentDefaultUrl);
+			return;
+		}
+
+		checkMarketplaceConfig(currentDefaultUrl, function (isValid) {
+			if (isValid) {
+				callback(currentDefaultUrl);
+				return;
+			}
+
+			let fallbackSource = marketplaceSource === 'gitverse' ? 'github' : 'gitverse';
+			let fallbackUrl = getMarketplaceUrlBySource(fallbackSource);
+			checkMarketplaceConfig(fallbackUrl, function (isFallbackValid) {
+				if (isFallbackValid) {
+					marketplaceSource = fallbackSource;
+					marketplaceURl = fallbackUrl;
+					try {
+						localStorage.setItem('DeveloperMarketplaceSource', marketplaceSource);
+					} catch (err) {
+						// nothing to do
+					}
+				}
+				callback(marketplaceURl || currentDefaultUrl);
+			});
+		});
+	}
 
 	function normalizeMarketplaceUrl(url) {
 		let value = (url || '').trim();
@@ -56,20 +146,27 @@
 		if (!match) {
 			match = source.match(/^https?:\/\/github\.com\/([^\/\s]+)\/([^\/\s#?]+)(?:\/tree\/([^#?]+))?\/?$/i);
 		}
+		if (!match) {
+			match = source.match(/^https?:\/\/gitverse\.ru\/([^\/\s]+)\/([^\/\s#?]+)(?:\/content\/([^\/\s#?]+)(?:\/.*)?)?\/?$/i);
+		}
 		if (!match)
 			return '';
 
 		let owner = match[1];
 		let repo = match[2].replace(/\.git$/i, '');
-		let branch = (match[3] || 'main').replace(/\/+$/, '');
+		let branch = (match[3] || 'master').replace(/\/+$/, '');
 		return owner + '/' + repo + '#' + branch;
 	}
 
 	function hasCustomSource() {
-		return !!marketplaceRepo || marketplaceURl !== OOMarketplaceUrl;
+		return !!marketplaceRepo ||
+			marketplaceURl !== getDefaultMarketplaceUrl() ||
+			marketplaceSource !== defaultMarketplaceSource;
 	}
 	try {
 		// for incognito mode
+		let savedSource = normalizeMarketplaceSource(localStorage.getItem('DeveloperMarketplaceSource'));
+		marketplaceSource = savedSource || defaultMarketplaceSource;
 		let savedRepo = normalizeMarketplaceRepo(localStorage.getItem('DeveloperMarketplaceRepo'));
 		if (savedRepo.length) {
 			marketplaceRepo = savedRepo;
@@ -78,11 +175,12 @@
 		}
 		let savedUrl = localStorage.getItem('DeveloperMarketplaceUrl');
 		let normalizedUrl = normalizeMarketplaceUrl(savedUrl);
-		marketplaceURl = marketplaceRepo ? OOMarketplaceUrl : (normalizedUrl || OOMarketplaceUrl);
+		marketplaceURl = marketplaceRepo ? getDefaultMarketplaceUrl() : (normalizedUrl || getDefaultMarketplaceUrl());
 		if (savedUrl && !normalizedUrl)
 			localStorage.removeItem('DeveloperMarketplaceUrl');
 	} catch (err) {
-		marketplaceURl = OOMarketplaceUrl;
+		marketplaceSource = defaultMarketplaceSource;
+		marketplaceURl = getDefaultMarketplaceUrl();
 	}
 
 	function applyThemeClass(type) {
@@ -147,8 +245,6 @@
 
 	function initPlugin() {
 		document.body.appendChild(iframe);
-		if (hasCustomSource())
-			document.getElementById('notification').classList.remove('hidden');
 
 		// send message that plugin is ready
 		window.Asc.plugin.executeMethod('GetVersion', null, function (version) {
@@ -160,8 +256,14 @@
 
 		let divNoInt = document.getElementById('div_noIternet');
 		let style = document.getElementsByTagName('head')[0].lastChild;
-		let pageUrl = marketplaceURl;
-		iframe.src = pageUrl + window.location.search;
+		resolveMarketplaceUrl(function (pageUrl) {
+			let notification = document.getElementById('notification');
+			if (hasCustomSource())
+				notification.classList.remove('hidden');
+			else
+				notification.classList.add('hidden');
+			iframe.src = pageUrl + window.location.search;
+		});
 		iframe.onload = function () {
 			BFrameReady = true;
 			if (BPluginReady) {
@@ -279,27 +381,59 @@
 	};
 
 	function checkInternet(bSetTimeout) {
-		try {
-			let xhr = new XMLHttpRequest();
-			let url = 'https://maikai-dev.github.io/r7-plugin-packages/store/translations/langs.json';
-			xhr.open('GET', url, true);
-
-			xhr.onload = function () {
-				if (this.readyState == 4) {
-					if (this.status >= 200 && this.status < 300) {
-						endInternetChecking(true);
+		let checkSourceUrl = function (url, callback) {
+			try {
+				let xhr = new XMLHttpRequest();
+				xhr.open('GET', buildMarketplaceAssetUrl(url, 'store/translations/langs.json?_v=' + Date.now()), true);
+				xhr.onload = function () {
+					let ok = false;
+					if (this.readyState == 4 && this.status >= 200 && this.status < 300) {
+						try {
+							JSON.parse(this.responseText);
+							ok = true;
+						} catch (error) {
+							ok = false;
+						}
 					}
+					callback(ok);
+				};
+				xhr.onerror = function () {
+					callback(false);
+				};
+				xhr.ontimeout = function () {
+					callback(false);
+				};
+				xhr.timeout = 8000;
+				xhr.send(null);
+			} catch (error) {
+				callback(false);
+			}
+		};
+
+		let current = marketplaceURl || getDefaultMarketplaceUrl();
+		checkSourceUrl(current, function (isOnline) {
+			if (isOnline) {
+				endInternetChecking(true);
+				return;
+			}
+			let fallbackSource = marketplaceSource === 'gitverse' ? 'github' : 'gitverse';
+			let fallbackUrl = getMarketplaceUrlBySource(fallbackSource);
+			checkSourceUrl(fallbackUrl, function (isFallbackOnline) {
+				if (isFallbackOnline) {
+					marketplaceSource = fallbackSource;
+					marketplaceURl = fallbackUrl;
+					try {
+						localStorage.setItem('DeveloperMarketplaceSource', marketplaceSource);
+					} catch (err) {
+						// nothing to do
+					}
+					endInternetChecking(true);
+					return;
 				}
-			};
-
-			xhr.onerror = function (err) {
 				endInternetChecking(false);
-			};
+			});
+		});
 
-			xhr.send(null);
-		} catch (error) {
-			endInternetChecking(false);
-		}
 		if (bSetTimeout) {
 			errTimeout = setTimeout(function () {
 				// if loading is too long show the error (because sometimes requests can not send error)
@@ -379,25 +513,37 @@
 				developerWindow.attachEvent('onWindowMessage', function (message) {
 					if (message.type == 'SetURL') {
 						let source = message.url;
+						let sourceKey = normalizeMarketplaceSource(source);
 						let customRepo = normalizeMarketplaceRepo(source);
 						let customUrl = normalizeMarketplaceUrl(source);
-						if (customRepo.length) {
+						if (sourceKey.length) {
+							marketplaceSource = sourceKey;
+							marketplaceRepo = '';
+							marketplaceURl = getDefaultMarketplaceUrl();
+							localStorage.setItem('DeveloperMarketplaceSource', marketplaceSource);
+							localStorage.removeItem('DeveloperMarketplaceRepo');
+							localStorage.removeItem('DeveloperMarketplaceUrl');
+						} else if (customRepo.length) {
 							marketplaceRepo = customRepo;
-							marketplaceURl = OOMarketplaceUrl;
+							marketplaceURl = getDefaultMarketplaceUrl();
 							localStorage.setItem('DeveloperMarketplaceRepo', marketplaceRepo);
 							localStorage.removeItem('DeveloperMarketplaceUrl');
-							document.getElementById('notification').classList.remove('hidden');
 						} else if (customUrl.length) {
 							marketplaceRepo = '';
 							marketplaceURl = customUrl;
 							localStorage.removeItem('DeveloperMarketplaceRepo');
 							localStorage.setItem('DeveloperMarketplaceUrl', marketplaceURl);
-							document.getElementById('notification').classList.remove('hidden');
 						} else {
+							marketplaceSource = defaultMarketplaceSource;
 							marketplaceRepo = '';
-							marketplaceURl = OOMarketplaceUrl;
+							marketplaceURl = getDefaultMarketplaceUrl();
+							localStorage.setItem('DeveloperMarketplaceSource', marketplaceSource);
 							localStorage.removeItem('DeveloperMarketplaceRepo');
 							localStorage.removeItem('DeveloperMarketplaceUrl');
+						}
+						if (hasCustomSource()) {
+							document.getElementById('notification').classList.remove('hidden');
+						} else {
 							document.getElementById('notification').classList.add('hidden');
 						}
 						iframe.src = marketplaceURl + window.location.search;

@@ -23,7 +23,14 @@ let isPluginLoading = false;                                         // flag plu
 let isOnline = true;                                                 // flag internet connection
 isLocal && checkInternet();                                          // check internet connection (only for desktop)
 let interval = null;                                                 // interval for checking internet connection (if it doesn't work on launch)
-const OOMarketplaceUrl = 'https://maikai-dev.github.io/r7-plugin-packages/';  // url to custom store (for local version store in desktop)
+const marketplaceSources = {
+	gitverse: 'https://maikai.gitverse.site/r7-plugin-packages/',
+	github: 'https://maikai-dev.github.io/r7-plugin-packages/'
+};
+const defaultMarketplaceSource = 'gitverse';
+const fallbackMarketplaceSource = 'github';
+let activeMarketplaceSource = detectMarketplaceSource();
+let OOMarketplaceUrl = marketplaceSources[activeMarketplaceSource] || marketplaceSources[defaultMarketplaceSource]; // url to custom store (for local version store in desktop)
 const OOIO = 'https://github.com/maikai-dev/r7-plugin-packages/';             // url to custom github repository (for links and discussions)
 const discussionsUrl = OOIO + 'discussions/';                        // discussions url
 let searchTimeout = null;                                            // timeot for search
@@ -131,7 +138,9 @@ window.Asc = {
 
 const pos = location.href.indexOf('store/index.html'); // position for make substring
 const ioUrl = location.href.substring(0, pos);         // real IO URL
-const configUrl = (isLocal ? OOMarketplaceUrl : location.href.substring(0, pos)) + 'store/config.json?_v=' + Date.now(); // url to config.json (it's for desktop. we should use remote config)
+function getConfigUrl() {
+	return (isLocal ? OOMarketplaceUrl : location.href.substring(0, pos)) + 'store/config.json?_v=' + Date.now();
+}
 
 // get translation file
 getTranslation();
@@ -401,7 +410,7 @@ window.addEventListener('message', function (message) {
 function fetchAllPlugins(bFirstRender, bshowMarketplace) {
 	// function for fetching all plugins from config
 	isPluginLoading = true;
-	makeRequest(configUrl, 'GET', null, null, true).then(
+	makeRequest(getConfigUrl(), 'GET', null, null, true).then(
 		function (response) {
 			allPlugins = JSON.parse(response);
 			if (installedPlugins)
@@ -487,6 +496,31 @@ function makeDesktopRequest(_url) {
 function sendMessage(message) {
 	// this function sends message to editor
 	parent.postMessage(JSON.stringify(message), '*');
+};
+
+function normalizeMarketplaceSource(value) {
+	let source = (value || '').trim().toLowerCase();
+	return marketplaceSources[source] ? source : '';
+};
+
+function detectMarketplaceSource() {
+	try {
+		let source = normalizeMarketplaceSource(localStorage.getItem('DeveloperMarketplaceSource'));
+		return source || defaultMarketplaceSource;
+	} catch (error) {
+		return defaultMarketplaceSource;
+	}
+};
+
+function applyMarketplaceSource(source) {
+	let normalized = normalizeMarketplaceSource(source) || defaultMarketplaceSource;
+	activeMarketplaceSource = normalized;
+	OOMarketplaceUrl = marketplaceSources[normalized];
+	try {
+		localStorage.setItem('DeveloperMarketplaceSource', normalized);
+	} catch (error) {
+		// nothing to do
+	}
 };
 
 function detectLanguage() {
@@ -1774,29 +1808,52 @@ function changeAfterInstallOrRemove(bInstall, guid, bHasLocal) {
 };
 
 function checkInternet() {
-	// url for check internet connection
-	let url = 'https://onlyoffice.github.io/store/translations/langs.json';
-	makeRequest(url, 'GET', null, null, true).then(
-		function () {
-			isOnline = true;
-			let bShowSelected = elements.divSelected && !elements.divSelected.classList.contains('hidden');
-			let bshowMarketplace = bShowSelected ? false : ((elements.btnMarketplace && elements.btnMarketplace.classList.contains('btn_toolbar_active')) ? true : false);
-			if (!allPlugins.length) {
-				fetchAllPlugins(interval === null, bshowMarketplace);
-			} else if (bShowSelected) {
-				let guid = elements.divSelected.getAttribute('data-guid');
-				let div = document.getElementById(guid);
-				if (div)
-					div.onclick();
-			} else if (bshowMarketplace) {
-				toogleView(elements.btnMarketplace, elements.btnAvailablePl, messages.linkPR, true, true);
-			} else if (!isLocal) {
-				toogleView(elements.btnAvailablePl, elements.btnMarketplace, messages.linkManually, false, true);
-			}
-			clearInterval(interval);
-			interval = null;
+	let primarySource = activeMarketplaceSource;
+	let secondarySource = primarySource === fallbackMarketplaceSource ? defaultMarketplaceSource : fallbackMarketplaceSource;
+	let candidates = [primarySource];
+	if (secondarySource !== primarySource)
+		candidates.push(secondarySource);
+
+	let onSuccess = function () {
+		isOnline = true;
+		let bShowSelected = elements.divSelected && !elements.divSelected.classList.contains('hidden');
+		let bshowMarketplace = bShowSelected ? false : ((elements.btnMarketplace && elements.btnMarketplace.classList.contains('btn_toolbar_active')) ? true : false);
+		if (!allPlugins.length) {
+			fetchAllPlugins(interval === null, bshowMarketplace);
+		} else if (bShowSelected) {
+			let guid = elements.divSelected.getAttribute('data-guid');
+			let div = document.getElementById(guid);
+			if (div)
+				div.onclick();
+		} else if (bshowMarketplace) {
+			toogleView(elements.btnMarketplace, elements.btnAvailablePl, messages.linkPR, true, true);
+		} else if (!isLocal) {
+			toogleView(elements.btnAvailablePl, elements.btnMarketplace, messages.linkManually, false, true);
 		}
-	);
+		clearInterval(interval);
+		interval = null;
+	};
+
+	let tryCandidate = function (index) {
+		if (index >= candidates.length)
+			return;
+		let source = candidates[index];
+		let url = marketplaceSources[source] + 'store/translations/langs.json?_v=' + Date.now();
+		makeRequest(url, 'GET', null, null, true).then(
+			function (response) {
+				// "Not found" HTML pages can return 200 on some hosts, so validate JSON body.
+				JSON.parse(response);
+				if (source !== activeMarketplaceSource)
+					applyMarketplaceSource(source);
+				onSuccess();
+			}
+		).catch(function () {
+			if (index + 1 < candidates.length)
+				tryCandidate(index + 1);
+		});
+	};
+
+	tryCandidate(0);
 };
 
 function handeNoInternet() {
