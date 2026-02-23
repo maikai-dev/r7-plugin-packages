@@ -1,0 +1,80 @@
+window.__R7PM_REGISTRY__ = [
+  {
+    "id": "asc.{C3B3D5A3-42DE-4168-9565-ABCD1E48A003}",
+    "guid": "asc.{C3B3D5A3-42DE-4168-9565-ABCD1E48A003}",
+    "slug": "data-generator",
+    "name": "Генератор данных",
+    "version": "1.0.0",
+    "description": "Генерация случайных или последовательных данных для ячеек: числа, даты, UUID, имена, email и пользовательские последовательности.",
+    "category": "specAbilities",
+    "compatibility": "7.3.3",
+    "package_url": "https://maikai.gitverse.site/r7-plugin-packages/artifacts/data-generator.plugin",
+    "checksum": "",
+    "icon": "https://maikai.gitverse.site/r7-plugin-packages/sdkjs-plugins/content/data-generator/resources/store/icons/icon.png"
+  },
+  {
+    "id": "asc.{C3B3D5A4-42DE-4168-9565-ABCD1E48A004}",
+    "guid": "asc.{C3B3D5A4-42DE-4168-9565-ABCD1E48A004}",
+    "slug": "cell-converter",
+    "name": "Конвертер ячеек",
+    "version": "1.0.0",
+    "description": "Конвертация единиц в выделенных ячейках: длина, вес, температура и валюта.",
+    "category": "specAbilities",
+    "compatibility": "7.3.3",
+    "package_url": "https://maikai.gitverse.site/r7-plugin-packages/artifacts/cell-converter.plugin",
+    "checksum": "",
+    "icon": "https://maikai.gitverse.site/r7-plugin-packages/sdkjs-plugins/content/cell-converter/resources/store/icons/icon.png"
+  },
+  {
+    "id": "asc.{C3B3D5A1-42DE-4168-9565-ABCD1E48A001}",
+    "guid": "asc.{C3B3D5A1-42DE-4168-9565-ABCD1E48A001}",
+    "slug": "cell-statistics",
+    "name": "Статистика ячеек",
+    "version": "1.0.0",
+    "description": "Просмотр статистики выделенных ячеек в реальном времени: сумма, среднее, минимум, максимум, медиана, количество и многое другое.",
+    "category": "specAbilities",
+    "compatibility": "7.3.3",
+    "package_url": "https://maikai.gitverse.site/r7-plugin-packages/artifacts/cell-statistics.plugin",
+    "checksum": "",
+    "icon": "https://maikai.gitverse.site/r7-plugin-packages/sdkjs-plugins/content/cell-statistics/resources/store/icons/icon.png"
+  },
+  {
+    "id": "asc.{C3B3D5A2-42DE-4168-9565-ABCD1E48A002}",
+    "guid": "asc.{C3B3D5A2-42DE-4168-9565-ABCD1E48A002}",
+    "slug": "cell-formatter",
+    "name": "Форматирование ячеек",
+    "version": "1.0.0",
+    "description": "Преобразование текста в выделенных ячейках: верхний регистр, нижний регистр, заглавные буквы, обрезка пробелов, удаление дубликатов и многое другое.",
+    "category": "specAbilities",
+    "compatibility": "7.3.3",
+    "package_url": "https://maikai.gitverse.site/r7-plugin-packages/artifacts/cell-formatter.plugin",
+    "checksum": "",
+    "icon": "https://maikai.gitverse.site/r7-plugin-packages/sdkjs-plugins/content/cell-formatter/resources/store/icons/icon.png"
+  },
+  {
+    "id": "asc.{1A96F780-BC1F-43BB-843A-6BE8BE1732B2}",
+    "guid": "asc.{1A96F780-BC1F-43BB-843A-6BE8BE1732B2}",
+    "slug": "password-generator",
+    "name": "Password Generator",
+    "version": "1.0.0",
+    "description": "Generates strong, secure passwords directly into your documents, spreadsheets, and presentations.",
+    "category": "misc",
+    "compatibility": "",
+    "package_url": "https://maikai.gitverse.site/r7-plugin-packages/artifacts/password-generator.plugin",
+    "checksum": "",
+    "icon": "https://maikai.gitverse.site/r7-plugin-packages/sdkjs-plugins/content/password-generator/images/icon.png"
+  },
+  {
+    "id": "asc.{BFC5D5C6-89DE-4168-9565-ABD8D1E48711}",
+    "guid": "asc.{BFC5D5C6-89DE-4168-9565-ABD8D1E48711}",
+    "slug": "zotero",
+    "name": "Zotero",
+    "version": "1.0.6",
+    "description": "Оформляйте библиографические списки в нужном стиле с помощью Zotero.",
+    "category": "specAbilities",
+    "compatibility": "7.3.3",
+    "package_url": "https://maikai.gitverse.site/r7-plugin-packages/artifacts/zotero.plugin",
+    "checksum": "",
+    "icon": "https://maikai.gitverse.site/r7-plugin-packages/sdkjs-plugins/content/zotero/resources/store/icons/icon.png"
+  }
+];
