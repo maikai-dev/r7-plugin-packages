@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Password Generator</title>
+    <link rel="stylesheet" href="../../plugins/plugin_base.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <script type="text/javascript" src="../../pluginBase.js"></script>
+</head>
+
+<body class="theme-light">
+    <div id="app">
+        <div class="panel">
+            <div class="input-group">
+                <input type="text" id="passwordOutput" readonly placeholder="Generated Password">
+                <button id="btnCopy" title="Copy to clipboard" class="btn-icon">📋</button>
+            </div>
+        </div>
+
+        <div class="panel settings">
+            <div class="control-row">
+                <label for="lengthRange">Length: <span id="lengthValue">16</span></label>
+                <input type="range" id="lengthRange" min="8" max="64" value="16">
+            </div>
+
+            <div class="checkbox-group">
+                <label><input type="checkbox" id="chkUppercase" checked> Uppercase (A-Z)</label>
+                <label><input type="checkbox" id="chkLowercase" checked> Lowercase (a-z)</label>
+                <label><input type="checkbox" id="chkNumbers" checked> Numbers (0-9)</label>
+                <label><input type="checkbox" id="chkSymbols" checked> Symbols (!@#$%^&*)</label>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button id="btnGenerate" class="btn btn-primary">Generate</button>
+            <button id="btnInsert" class="btn btn-success">Insert into Document</button>
+        </div>
+    </div>
+    <script type="text/javascript" src="scripts/code.js"></script>
+</body>
+
+</html>

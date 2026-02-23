@@ -1,0 +1,28 @@
+{
+    "name": "Password Generator",
+    "guid": "asc.{1A96F780-BC1F-43BB-843A-6BE8BE1732B2}",
+    "version": "1.0.0",
+    "variations": [
+        {
+            "description": "Generates strong, secure passwords directly into your documents, spreadsheets, and presentations.",
+            "url": "index.html",
+            "icons": [
+                "images/icon.png",
+                "images/icon@2x.png"
+            ],
+            "isViewer": false,
+            "EditorsSupport": [
+                "word",
+                "cell",
+                "slide"
+            ],
+            "isVisual": true,
+            "isModal": false,
+            "isInsideMode": true,
+            "initDataType": "none",
+            "initData": "",
+            "isUpdateOleOnResize": true,
+            "buttons": []
+        }
+    ]
+}

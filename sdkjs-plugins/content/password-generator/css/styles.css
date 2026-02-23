@@ -1,0 +1,136 @@
+body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 16px;
+    background-color: #f9f9f9;
+    color: #333;
+}
+
+#app {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.panel {
+    background: #fff;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e1e1e1;
+}
+
+.input-group {
+    display: flex;
+    gap: 8px;
+}
+
+#passwordOutput {
+    flex: 1;
+    font-family: monospace;
+    font-size: 16px;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: #f5f5f5;
+    color: #000;
+}
+
+.btn-icon {
+    background: #eef2f5;
+    border: 1px solid #c5d2dc;
+    border-radius: 4px;
+    padding: 0 12px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.2s;
+}
+
+.btn-icon:hover {
+    background: #dbe4eb;
+}
+
+.control-row {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.control-row label {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+input[type=range] {
+    width: 100%;
+}
+
+.checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.checkbox-group label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.btn {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.btn:hover {
+    opacity: 0.9;
+}
+
+.btn-primary {
+    background: #444;
+    color: #fff;
+}
+
+.btn-success {
+    background: #0088cc;
+    color: #fff;
+}
+
+/* R7 Dark Mode Support via class */
+body.theme-type-dark,
+.theme-type-dark {
+    background-color: #2b2b2b;
+    color: #fff;
+}
+
+.theme-type-dark .panel {
+    background: #333;
+    border-color: #444;
+}
+
+.theme-type-dark #passwordOutput {
+    background: #1e1e1e;
+    color: #4CAF50;
+    border-color: #555;
+}
+
+.theme-type-dark .btn-icon {
+    background: #444;
+    border-color: #555;
+    color: #fff;
+}

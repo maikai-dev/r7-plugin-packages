@@ -71,7 +71,7 @@ class PluginPacker:
         """Safely rename file with retry logic for locked files"""
         for attempt in range(max_retries):
             try:
-                Path(src).rename(dst)
+                Path(src).replace(dst)
                 return True
             except PermissionError:
                 if attempt < max_retries - 1:
@@ -180,10 +180,10 @@ class PluginPacker:
             plugin_file_path = Path(zip_path).with_suffix(".plugin")
             
             if self.safe_rename(zip_path, plugin_file_path):
-                print(f"✅ Created: {plugin_name}")
+                print(f"[SUCCESS] Created: {plugin_name}")
                 return True
             else:
-                print(f"❌ Failed to create: {plugin_name}")
+                print(f"[FAILED] Failed to create: {plugin_name}")
                 return False
                 
         except Exception as e:
