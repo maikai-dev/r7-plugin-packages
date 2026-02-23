@@ -23,24 +23,24 @@
 }
 
 body.theme-type-dark {
-	--pm-bg-primary: #404040;
-	--pm-bg-secondary: transparent;
-	--pm-bg-tertiary: #3a3a3a;
+	--pm-bg-primary: #1e1e1e;
+	--pm-bg-secondary: #2b2b2b;
+	--pm-bg-tertiary: #333333;
 	--pm-text-primary: #ffffff;
-	--pm-text-secondary: #e1e1e1;
-	--pm-text-muted: rgba(225, 225, 225, 0.8);
-	--pm-border: #e1e1e1;
-	--pm-border-soft: #e1e1e1;
-	--pm-accent: #0030b2;
-	--pm-accent-strong: #ec4a00;
-	--pm-warning: #ec4a00;
-	--pm-button-neutral: #404040;
+	--pm-text-secondary: #b3b3b3;
+	--pm-text-muted: #888888;
+	--pm-border: #404040;
+	--pm-border-soft: #333333;
+	--pm-accent: #0f83e8;
+	--pm-accent-strong: #fea626;
+	--pm-warning: #fea626;
+	--pm-button-neutral: #333333;
 	--pm-button-neutral-text: #ffffff;
 	--pm-button-alt: transparent;
 	--pm-button-alt-text: #ffffff;
-	--pm-overlay: rgba(0, 0, 0, 0.36);
-	--pm-shadow-card: none;
-	--pm-shadow-hover: none;
+	--pm-overlay: rgba(0, 0, 0, 0.6);
+	--pm-shadow-card: 0 4px 6px rgba(0, 0, 0, 0.3);
+	--pm-shadow-hover: 0 8px 12px rgba(0, 0, 0, 0.5);
 }
 
 * {
