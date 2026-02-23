@@ -1,27 +1,59 @@
-[![License](https://img.shields.io/badge/License-Apache_2.0-green.svg)](https://www.apache.org/licenses/LICENSE-2.0)
+# R7-Plugin-Packages — Каталог плагинов для Р7-Офис
 
-## Overview
+Облачный каталог плагинов для редактора **Р7-Офис**, размещённый на GitVerse Pages.  
+Пользователи просматривают каталог и устанавливают плагины прямо из окна Р7-Офис через связанный репозиторий **[r7-plugin-manager](https://github.com/in2sql/r7-plugin-manager)**.
 
-Welcome to the onlyoffice.github.io repository! This repository contains the necessary files and resources to set up and manage plugins for ONLYOFFICE.
+## Структура репозитория
 
-## Repository Structure
+```
+r7-plugin-packages/
+├── artifacts/             # Готовые .plugin архивы (для прямой установки)
+│   ├── zotero.plugin
+│   ├── cell-statistics.plugin
+│   ├── cell-formatter.plugin
+│   ├── data-generator.plugin
+│   ├── cell-converter.plugin
+│   └── password-generator.plugin
+├── sdkjs-plugins/
+│   └── content/           # Исходный код плагинов (для разработки и сборки)
+├── store/
+│   ├── config.json        # Список плагинов в каталоге
+│   ├── index.html         # Главная страница каталога (показывается в Р7-Офис)
+│   ├── scripts/code.js    # Frontend логика каталога
+│   └── resources/css/     # Стили (темная/светлая тема)
+├── packer/
+│   └── pack.py            # Скрипт сборки .plugin архивов
+└── docs/                  # Техническая документация
+```
 
-* [**sdkjs-plugins**](sdkjs-plugins): This directory contains the stylesheets and CSS files used for plugin customization and styling. Also it contains the code and resourses of all plugins in store.
-* [**store**](store): This directory contains the code and resources for the Plugins Manager. It includes the necessary scripts and configurations to manage plugins within ONLYOFFICE.
+## Доступные плагины
 
-## Contributing
+| Плагин | Описание | Редакторы |
+|---|---|---|
+| 🔬 **Cell Statistics** | Статистика по выделенным ячейкам | Таблицы |
+| 🎨 **Cell Formatter** | Форматирование ячеек | Таблицы |
+| 🎲 **Data Generator** | Генерация тестовых данных | Таблицы |
+| 🔄 **Cell Converter** | Конвертация данных | Таблицы |
+| 🔐 **Password Generator** | Генератор стойких паролей | Все |
+| 📚 **Zotero** | Интеграция с библиографией Zotero | Все |
 
-If you would like to contribute to the ONLYOFFICE Plugin Marketplace, we welcome your contributions. To contribute, please follow these [guidelines](https://github.com/ONLYOFFICE/onlyoffice.github.io/tree/master/store#how-to-build-and-add-your-own-plugin). We appreciate your contributions and will review them as soon as possible.
+## Разработка нового плагина
 
-## License
+1. Создайте папку в `sdkjs-plugins/content/<имя-плагина>/`
+2. Создайте `config.json`, `index.html`, `scripts/code.js`
+3. Добавьте имя плагина в `store/config.json`
+4. Запустите сборку:
+   ```bash
+   python packer/pack.py
+   ```
+5. Сделайте `git commit && git push`
+6. Переопубликуйте GitVerse Pages — плагин появится в менеджере
 
-onlyoffice.github.io is licensed under the Apache License, version 2.0. See [LICENSE](LICENSE) for more information.
+## Как работает установка
 
-## User Feedback and Support
+GitVerse Pages раздаёт статику на `https://maikai.gitverse.site/r7-plugin-packages/`.  
+Р7-Офис загружает страницу каталога через iframe. При нажатии **"Установить"** `r7-plugin-manager` скачивает готовый архив напрямую из папки `artifacts/`:
 
-If you have any problems with or questions about ONLYOFFICE Plugins and Plugin Marketplace, please visit our official forum to find answers to your questions: [forum.onlyoffice.com](https://forum.onlyoffice.com) or you can ask and answer ONLYOFFICE development questions on [Stack Overflow](https://stackoverflow.com/questions/tagged/onlyoffice).
-If you encounter any issues or have any questions regarding the ONLYOFFICE Plugins and Plugin Marketplace, please open an issue in the repository. We'll be glad to assist you.
-
-## Acknowledgments
-
-We would like to thank all the contributors and developers who have worked on the ONLYOFFICE Plugin Marketplace.
+```
+artifacts/<имя-плагина>.plugin  →  R7-Office C++ downloader  →  %LOCALAPPDATA%\R7-Office\...\sdkjs-plugins\
+```
