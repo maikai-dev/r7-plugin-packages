@@ -3,9 +3,9 @@ const path = require('path');
 
 const repo = process.cwd();
 const siteBase = 'https://maikai.gitverse.site/r7-plugin-packages/';
-// R7 Desktop downloader behaves inconsistently with GitVerse direct .plugin URLs in some builds.
-// Use GitHub raw for plugin archives, but keep site/registry/icon URLs on GitVerse Pages.
-const packageArtifactsBase = 'https://raw.githubusercontent.com/maikai-dev/r7-plugin-packages/master/artifacts/';
+// GitVerse raw file endpoint (discovered from GitVerse repo HTML + matches docs "download_url" behavior).
+// Keeps plugin package downloads on GitVerse instead of GitHub mirror.
+const packageArtifactsBase = 'https://gitverse.ru/api/repos/Maikai/r7-plugin-packages/raw/branch/master/artifacts/';
 const storeConfigPath = path.join(repo, 'store', 'config.json');
 const manifestsRoot = path.join(repo, 'sdkjs-plugins', 'content');
 const registryRoot = path.join(repo, 'store', 'registry');
