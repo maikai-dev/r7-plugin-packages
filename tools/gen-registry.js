@@ -2,7 +2,10 @@
 const path = require('path');
 
 const repo = process.cwd();
-const base = 'https://maikai.gitverse.site/r7-plugin-packages/';
+const siteBase = 'https://maikai.gitverse.site/r7-plugin-packages/';
+// R7 Desktop downloader behaves inconsistently with GitVerse direct .plugin URLs in some builds.
+// Use GitHub raw for plugin archives, but keep site/registry/icon URLs on GitVerse Pages.
+const packageArtifactsBase = 'https://raw.githubusercontent.com/maikai-dev/r7-plugin-packages/master/artifacts/';
 const storeConfigPath = path.join(repo, 'store', 'config.json');
 const manifestsRoot = path.join(repo, 'sdkjs-plugins', 'content');
 const registryRoot = path.join(repo, 'store', 'registry');
@@ -22,7 +25,7 @@ function pickLocale(dict, fallback) {
 }
 
 function resolveIcon(slug, variation) {
-  const basePath = `${base}sdkjs-plugins/content/${slug}/`;
+  const basePath = `${siteBase}sdkjs-plugins/content/${slug}/`;
   if (variation && variation.store && variation.store.icons && variation.store.icons.light) {
     return `${basePath}${variation.store.icons.light}/icon.png`;
   }
@@ -58,7 +61,7 @@ for (const slug of slugs) {
     description: pickLocale(vr.descriptionLocale, vr.description || ''),
     category,
     compatibility: mf.minVersion || '',
-    package_url: `${base}artifacts/${slug}.plugin`,
+    package_url: `${packageArtifactsBase}${slug}.plugin`,
     checksum: '',
     icon: resolveIcon(slug, vr)
   });
@@ -76,7 +79,7 @@ for (const item of full) {
 const categoriesIndex = Object.keys(categories).sort().map((cat) => ({
   id: cat,
   title: cat,
-  url: `${base}store/registry/categories/${cat}.json`,
+  url: `${siteBase}store/registry/categories/${cat}.json`,
   count: categories[cat].length
 }));
 
@@ -91,7 +94,7 @@ for (const [cat, list] of Object.entries(categories)) {
 writeJson(path.join(registryRoot, 'versioned', 'latest.json'), {
   version: `registry-${stamp}`,
   generated_at: new Date().toISOString(),
-  url: `${base}store/registry/versioned/plugins.${stamp}.json`
+  url: `${siteBase}store/registry/versioned/plugins.${stamp}.json`
 });
 writeJson(path.join(registryRoot, 'versioned', `plugins.${stamp}.json`), full);
 

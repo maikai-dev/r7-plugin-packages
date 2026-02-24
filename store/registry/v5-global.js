@@ -8,7 +8,7 @@ window.__R7PM_REGISTRY__ = [
     "description": "Генерация случайных или последовательных данных для ячеек: числа, даты, UUID, имена, email и пользовательские последовательности.",
     "category": "specAbilities",
     "compatibility": "7.3.3",
-    "package_url": "https://maikai.gitverse.site/r7-plugin-packages/artifacts/data-generator.plugin",
+    "package_url": "https://raw.githubusercontent.com/maikai-dev/r7-plugin-packages/master/artifacts/data-generator.plugin",
     "checksum": "",
     "icon": "https://maikai.gitverse.site/r7-plugin-packages/sdkjs-plugins/content/data-generator/resources/store/icons/icon.png"
   },
@@ -21,7 +21,7 @@ window.__R7PM_REGISTRY__ = [
     "description": "Конвертация единиц в выделенных ячейках: длина, вес, температура и валюта.",
     "category": "specAbilities",
     "compatibility": "7.3.3",
-    "package_url": "https://maikai.gitverse.site/r7-plugin-packages/artifacts/cell-converter.plugin",
+    "package_url": "https://raw.githubusercontent.com/maikai-dev/r7-plugin-packages/master/artifacts/cell-converter.plugin",
     "checksum": "",
     "icon": "https://maikai.gitverse.site/r7-plugin-packages/sdkjs-plugins/content/cell-converter/resources/store/icons/icon.png"
   },
@@ -34,7 +34,7 @@ window.__R7PM_REGISTRY__ = [
     "description": "Просмотр статистики выделенных ячеек в реальном времени: сумма, среднее, минимум, максимум, медиана, количество и многое другое.",
     "category": "specAbilities",
     "compatibility": "7.3.3",
-    "package_url": "https://maikai.gitverse.site/r7-plugin-packages/artifacts/cell-statistics.plugin",
+    "package_url": "https://raw.githubusercontent.com/maikai-dev/r7-plugin-packages/master/artifacts/cell-statistics.plugin",
     "checksum": "",
     "icon": "https://maikai.gitverse.site/r7-plugin-packages/sdkjs-plugins/content/cell-statistics/resources/store/icons/icon.png"
   },
@@ -47,7 +47,7 @@ window.__R7PM_REGISTRY__ = [
     "description": "Преобразование текста в выделенных ячейках: верхний регистр, нижний регистр, заглавные буквы, обрезка пробелов, удаление дубликатов и многое другое.",
     "category": "specAbilities",
     "compatibility": "7.3.3",
-    "package_url": "https://maikai.gitverse.site/r7-plugin-packages/artifacts/cell-formatter.plugin",
+    "package_url": "https://raw.githubusercontent.com/maikai-dev/r7-plugin-packages/master/artifacts/cell-formatter.plugin",
     "checksum": "",
     "icon": "https://maikai.gitverse.site/r7-plugin-packages/sdkjs-plugins/content/cell-formatter/resources/store/icons/icon.png"
   },
@@ -60,7 +60,7 @@ window.__R7PM_REGISTRY__ = [
     "description": "Generates strong, secure passwords directly into your documents, spreadsheets, and presentations.",
     "category": "misc",
     "compatibility": "",
-    "package_url": "https://maikai.gitverse.site/r7-plugin-packages/artifacts/password-generator.plugin",
+    "package_url": "https://raw.githubusercontent.com/maikai-dev/r7-plugin-packages/master/artifacts/password-generator.plugin",
     "checksum": "",
     "icon": "https://maikai.gitverse.site/r7-plugin-packages/sdkjs-plugins/content/password-generator/images/icon.png"
   },
@@ -73,7 +73,7 @@ window.__R7PM_REGISTRY__ = [
     "description": "Оформляйте библиографические списки в нужном стиле с помощью Zotero.",
     "category": "specAbilities",
     "compatibility": "7.3.3",
-    "package_url": "https://maikai.gitverse.site/r7-plugin-packages/artifacts/zotero.plugin",
+    "package_url": "https://raw.githubusercontent.com/maikai-dev/r7-plugin-packages/master/artifacts/zotero.plugin",
     "checksum": "",
     "icon": "https://maikai.gitverse.site/r7-plugin-packages/sdkjs-plugins/content/zotero/resources/store/icons/icon.png"
   }
