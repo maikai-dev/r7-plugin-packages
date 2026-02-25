@@ -18,13 +18,13 @@
 
 const version = '1.0.8';                                             // version of store (will change it when update something in store)
 let start = Date.now();
-const isLocal = ((window.AscDesktopEditor !== undefined) && (window.location.protocol.indexOf('file') !== -1)); // desktop detecting
+const isLocal = ( (window.AscDesktopEditor !== undefined) && (window.location.protocol.indexOf('file') !== -1) ); // desktop detecting
 let isPluginLoading = false;                                         // flag plugins loading
 let isOnline = true;                                                 // flag internet connection
 isLocal && checkInternet();                                          // check internet connection (only for desktop)
 let interval = null;                                                 // interval for checking internet connection (if it doesn't work on launch)
-const OOMarketplaceUrl = 'https://maikai-dev.github.io/r7-plugin-packages/';  // url to custom store (for local version store in desktop)
-const OOIO = 'https://github.com/maikai-dev/r7-plugin-packages/';             // url to custom github repository (for links and discussions)
+const OOMarketplaceUrl = 'https://maikai-dev.github.io/r7-plugin-packages/';            // url to store (for local version store in desktop)
+const OOIO = 'https://github.com/maikai-dev/r7-plugin-packages/';                       // url to github repository (for links and discussions)
 const discussionsUrl = OOIO + 'discussions/';                        // discussions url
 let searchTimeout = null;                                            // timeot for search
 let founded = [];                                                    // last founded elemens (for not to redraw if a result is the same)
@@ -32,7 +32,8 @@ let catFiltred = [];                                                 // plugins 
 let updateCount = 0;                                                 // counter for plugins in updating process
 let discussionCount = 0;                                             // counter for loading plugin`s discussions
 let allPlugins = [];                                                 // list of all plugins from config
-let installedPlugins;                                                // list of intalled plugins
+let installedPlugins = [];                                           // list of installed plugins (default to empty for standalone)
+let hasAllPluginsData = false;                                       // flag when all plugin configs are loaded
 const elements = {};                                                 // all elements
 const guidMarkeplace = 'asc.{AA2EA9B6-9EC2-415F-9762-634EE8D9A95E}'; // guid marketplace
 const guidSettings = 'asc.{8D67F3C5-7736-4BAE-A0F2-8C7127DC4BB8}';   // guid settings plugins
@@ -44,7 +45,7 @@ const shortLang = lang.split('-')[0];                                // short la
 let bTranslate = false;                                              // flag translate or not
 let isTranslationLoading = false;                                    // flag translation loading
 let isFrameLoading = true;                                           // flag window loading
-let translate = { 'Loading': 'Loading' };                              // translations for current language (thouse will necessary if we don't get tranlation file)
+let translate = {'Loading': 'Loading'};                              // translations for current language (thouse will necessary if we don't get tranlation file)
 let timeout = null;                                                  // delay for loader
 let defaultBG = themeType == 'light' ? "#F5F5F5" : '#555555';        // default background color for plugin header
 let isResizeOnStart = false;                                         // flag for firs resize on start
@@ -54,9 +55,9 @@ let PsChangelog = null;                                               // scroll 
 const proxyUrl = 'https://plugins-services.onlyoffice.com/proxy';    // url to proxy for getting rating
 const supportedScaleValues = [1, 1.25, 1.5, 1.75, 2];                // supported scale
 let scale = {                                                        // current scale
-	percent: "100%",                                               // current scale in percent
-	value: 1,                                                    // current scale value
-	devicePR: 1                                                     // device pixel ratio
+	percent  : "100%",                                               // current scale in percent
+	value    : 1,                                                    // current scale value
+	devicePR : 1                                                     // device pixel ratio
 };
 calculateScale();
 const languages = [                                                  // list of languages
@@ -80,8 +81,8 @@ const messages = {
 	linkPR: 'Submit your own plugin'
 };
 const isIE = (navigator.userAgent.toLowerCase().indexOf("msie") > -1 ||
-	navigator.userAgent.toLowerCase().indexOf("trident") > -1 ||
-	navigator.userAgent.toLowerCase().indexOf("edge") > -1);
+				navigator.userAgent.toLowerCase().indexOf("trident") > -1 ||
+				navigator.userAgent.toLowerCase().indexOf("edge") > -1);
 
 // it's necessary because we show loader before all (and getting translations too)
 switch (shortLang) {
@@ -122,16 +123,16 @@ switch (shortLang) {
 
 // it's necessary for loader (because it detects theme by this object)
 window.Asc = {
-	plugin: {
-		theme: {
-			type: themeType
+	plugin : {
+		theme : {
+			type :  themeType
 		}
 	}
 };
 
 const pos = location.href.indexOf('store/index.html'); // position for make substring
 const ioUrl = location.href.substring(0, pos);         // real IO URL
-const configUrl = (isLocal ? OOMarketplaceUrl : location.href.substring(0, pos)) + 'store/config.json?_v=' + Date.now(); // url to config.json (it's for desktop. we should use remote config)
+const configUrl = ( isLocal ? OOMarketplaceUrl : location.href.substring(0, pos) ) + 'store/config.json'; // url to config.json (it's for desktop. we should use remote config)
 
 // get translation file
 getTranslation();
@@ -139,7 +140,7 @@ getTranslation();
 if (!isLocal)
 	fetchAllPlugins(true, false);
 
-window.onload = function () {
+window.onload = function() {
 	let rule = '\n.asc-plugin-loader{background-color:' + (themeType == 'light' ? '#ffffff' : '#333333') + ';padding: 10px;display: flex;justify-content: center;align-items: center;border-radius: 5px;}\n'
 	rule += '.asc-plugin-loader{color:' + (themeType == 'light' ? '#444444' : 'rgba(255,255,255,0.8)') + '}\n';
 	let styleTheme = document.createElement('style');
@@ -159,22 +160,22 @@ window.onload = function () {
 		showMarketplace();
 	}
 
-	elements.btnAvailablePl.onclick = function (event) {
+	elements.btnAvailablePl.onclick = function(event) {
 		// click on available plugins button
 		toogleView(event.target, elements.btnMarketplace, messages.linkManually, false, false);
 	};
 
-	elements.btnMarketplace.onclick = function (event) {
+	elements.btnMarketplace.onclick = function(event) {
 		// click on marketplace button
 		toogleView(event.target, elements.btnAvailablePl, messages.linkPR, true, false);
 	};
 
-	elements.inpSearch.addEventListener('input', function (event) {
+	elements.inpSearch.addEventListener('input', function(event) {
 		makeSearch(event.target.value.trim().toLowerCase());
 	});
 };
 
-window.addEventListener('message', function (message) {
+window.addEventListener('message', function(message) {
 	// getting messages from editor or plugin
 
 	// try to parse message
@@ -191,8 +192,8 @@ window.addEventListener('message', function (message) {
 		case 'InstalledPlugins':
 			if (message.data) {
 				// filter installed plugins (delete removed, that are in store and some system plugins)
-				installedPlugins = message.data.filter(function (el) {
-					return (el.guid !== guidMarkeplace && el.guid !== guidSettings && !(el.removed && el.obj.baseUrl.includes(ioUrl)));
+				installedPlugins = message.data.filter(function(el) {
+					return (el.guid !== guidMarkeplace && el.guid !== guidSettings && !( el.removed && el.obj.baseUrl.includes(ioUrl) ));
 				});
 				sortPlugins(false, true, 'start');
 			} else {
@@ -201,11 +202,15 @@ window.addEventListener('message', function (message) {
 
 			// console.log('getInstalledPlugins: ' + (Date.now() - start));
 
-			if (message.updateInstalled)
+			if (message.updateInstalled) {
 				showListofPlugins(false);
-			else if (allPlugins.length || (isLocal && !isOnline))
+			} else if (!hasAllPluginsData && ( allPlugins.length || (isLocal && !isOnline) )) {
 				getAllPluginsData(true, false);
-
+			} else if (hasAllPluginsData && elements.btnMarketplace) {
+				const bAll = elements.btnMarketplace.classList.contains('btn_toolbar_active');
+				showListofPlugins(bAll);
+			}
+			
 			break;
 		case 'Installed':
 			if (!message.guid) {
@@ -281,11 +286,11 @@ window.addEventListener('message', function (message) {
 
 			plugin = findPlugin(true, message.guid);
 			installed = findPlugin(false, message.guid);
-
+			
 			if (installed) {
 				bHasLocal = !installed.obj.baseUrl.includes(ioUrl);
-				if (plugin && (!bHasLocal || (isLocal && !needBackup))) {
-					installedPlugins = installedPlugins.filter(function (el) { return el.guid !== message.guid });
+				if (plugin && (!bHasLocal || (isLocal && !needBackup) ) ) {
+					installedPlugins = installedPlugins.filter(function(el){return el.guid !== message.guid});
 					bUpdate = true;
 				} else {
 					installed.removed = true;
@@ -311,7 +316,7 @@ window.addEventListener('message', function (message) {
 					changeAfterInstallOrRemove(false, message.guid, bHasLocal);
 				}
 			} else {
-				changeAfterInstallOrRemove(false, message.guid, bHasLocal);
+				changeAfterInstallOrRemove(false, message.guid, bHasLocal);				
 			}
 
 			toogleLoader(false);
@@ -324,7 +329,7 @@ window.addEventListener('message', function (message) {
 			if (message.theme.type)
 				themeType = message.theme.type;
 
-			let rule = '.text-secondary{color:' + message.theme["text-secondary"] + ';}\n';
+			let rule = '.text-secondary{color:'+message.theme["text-secondary"]+';}\n';
 
 			if (themeType.includes('light')) {
 				this.document.getElementsByTagName('body')[0].classList.add('white_bg');
@@ -343,7 +348,7 @@ window.addEventListener('message', function (message) {
 				rule += '.div_offered_votes{color: rgba(255,255,255,0.8) !important;}\n';
 				rule += '.btn_install[disabled]:hover,.btn_install.disabled:hover,.btn_install[disabled]:active,.btn_install[disabled].active,.btn_install.disabled:active,.btn_install.disabled.active{background-color: #e0e0e0 !important; color: #333 !important; border:1px solid #e0e0e0 !important;}\n';
 				rule += '.select2-container--default .select2-results__option[aria-selected=true] { color: white;}\n';
-				message.style = message.style.replace('.select2-container--default .select2-results__option--highlighted[aria-selected] {background-color : #555 !important; }', '.select2-container--default .select2-results__option--highlighted[aria-selected] { background-color : #555 !important; color: white !important;}');
+				message.style = message.style.replace('.select2-container--default .select2-results__option--highlighted[aria-selected] {background-color : #555 !important; }','.select2-container--default .select2-results__option--highlighted[aria-selected] { background-color : #555 !important; color: white !important;}');
 				message.style = message.style.replace(/#b5e4ff/g, 'rgba(255, 255, 255, 0.8)');
 			}
 
@@ -357,7 +362,7 @@ window.addEventListener('message', function (message) {
 				defaultBG = themeType == 'light' ? "#F5F5F5" : '#555555';
 				let bshowMarketplace = elements.btnMarketplace && elements.btnMarketplace.classList.contains('btn_toolbar_active');
 				let arrPl = bshowMarketplace ? allPlugins : installedPlugins;
-				arrPl.forEach(function (pl) {
+				arrPl.forEach(function(pl) {
 					let div = document.getElementById(pl.guid);
 					if (div) {
 						let variation = pl.variations ? pl.variations[0] : pl.obj.variations[0];
@@ -368,9 +373,9 @@ window.addEventListener('message', function (message) {
 						} else {
 							// todo now we have one icon for all theme for plugins in store. change it when we will have different icons for different theme (now it's not necessary). use for all icons 'changeIcons'
 							// It's why we should change icons only for plugins with default icon or plugins icon (which don't have 'store' field in config)
-							div.firstChild.firstChild.setAttribute('src', getImageUrl(pl.guid, false, false, ('img_' + pl.guid)));
+							div.firstChild.firstChild.setAttribute( 'src', getImageUrl( pl.guid, false, false, ('img_' + pl.guid) ) );
 						}
-						div.firstChild.setAttribute('style', ('background:' + bg));
+						div.firstChild.setAttribute('style', ('background:' + bg) );
 					}
 				});
 				let guid = elements.imgIcon.parentNode.parentNode.parentNode.getAttribute('data-guid');
@@ -389,8 +394,8 @@ window.addEventListener('message', function (message) {
 			break;
 		case 'PluginReady':
 			// get all installed plugins
-			editorVersion = (message.version && message.version.includes('.') ? getPluginVersion(message.version) : 1e8);
-			sendMessage({ type: 'getInstalled' }, '*');
+			editorVersion = ( message.version && message.version.includes('.') ? getPluginVersion(message.version) : 1e8 );
+			sendMessage({type: 'getInstalled'}, '*');
 			break;
 		case 'onClickBack':
 			onClickBack();
@@ -402,13 +407,13 @@ function fetchAllPlugins(bFirstRender, bshowMarketplace) {
 	// function for fetching all plugins from config
 	isPluginLoading = true;
 	makeRequest(configUrl, 'GET', null, null, true).then(
-		function (response) {
+		function(response) {
 			allPlugins = JSON.parse(response);
 			if (installedPlugins)
 				getAllPluginsData(bFirstRender, bshowMarketplace);
 		},
-		function (err) {
-			createError(new Error('Problem with loading markeplace config.'));
+		function(err) {
+			createError( new Error('Problem with loading markeplace config.') );
 			isPluginLoading = false;
 			showMarketplace();
 		}
@@ -420,7 +425,7 @@ function makeRequest(url, method, responseType, body, bHandeNoInternet) {
 	// maybe use fetch to in this function
 	if (!method)
 		method = 'GET';
-
+	
 	if (body)
 		body = JSON.stringify(body);
 
@@ -430,7 +435,7 @@ function makeRequest(url, method, responseType, body, bHandeNoInternet) {
 			xhr.open(method, url, true);
 			if (responseType)
 				xhr.responseType = responseType;
-
+			
 			xhr.onload = function () {
 				if (this.readyState == 4) {
 					if (this.status !== 404 && (this.status == 200 || location.href.indexOf("file:") == 0)) {
@@ -438,7 +443,7 @@ function makeRequest(url, method, responseType, body, bHandeNoInternet) {
 					}
 					if (this.status >= 400) {
 						let errorText = this.status === 404 ? 'File not found.' : 'Network problem.';
-						reject(new Error(getTranslated(errorText)));
+						reject( new Error( getTranslated(errorText) ) );
 					}
 				}
 			};
@@ -453,15 +458,15 @@ function makeRequest(url, method, responseType, body, bHandeNoInternet) {
 		} catch (error) {
 			reject(error);
 		}
-
+		
 	});
 };
 
 function makeDesktopRequest(_url) {
 	// function for getting rating page in desktop
-	return new Promise(function (resolve, reject) {
-		if (!_url.startsWith('http')) {
-			resolve({ status: 'skipped', response: { statusText: _url } });
+	return new Promise(function(resolve, reject) {
+		if ( !_url.startsWith('http') ) {
+			resolve({status:'skipped', response: {statusText: _url}});
 		} else {
 			window.AscSimpleRequest.createRequest({
 				url: _url,
@@ -469,15 +474,15 @@ function makeDesktopRequest(_url) {
 				crossDomain: true,
 				timeout: 10000,
 				headers: '',
-				complete: function (e, status) {
-					if (status == 'success') {
-						resolve({ status: status, response: e });
+				complete: function(e, status) {
+					if ( status == 'success' ) {
+						resolve({status:status, response:e});
 					} else {
-						reject({ status: status, response: e });
+						reject({status:status, response:e});
 					}
 				},
-				error: function (e, status, error) {
-					reject({ status: status, response: e });
+				error: function(e, status, error) {
+					reject({status:status, response:e});
 				}
 			});
 		}
@@ -549,11 +554,11 @@ function toogleLoader(show, text) {
 		clearTimeout(timeout);
 		document.getElementById('loader-container').classList.add('hidden');
 		loader && (loader.remove ? loader.remove() : $('#loader-container')[0].removeChild(loader));
-		loader = undefined;
-	} else if (!loader) {
+		loader = undefined;	
+	} else if(!loader) {
 		document.getElementById('loader-container').classList.remove('hidden');
 		loader && (loader.remove ? loader.remove() : $('#loader-container')[0].removeChild(loader));
-		loader = showLoader($('#loader-container')[0], (getTranslated(text)) + '...');
+		loader = showLoader($('#loader-container')[0], ( getTranslated(text) ) + '...');
 	}
 };
 
@@ -563,42 +568,42 @@ function getAllPluginsData(bFirstRender, bshowMarketplace) {
 	let count = 0;
 	let Unloaded = [];
 	let url = isLocal ? OOMarketplaceUrl : ioUrl;
-	allPlugins.forEach(function (plugin, i, arr) {
+	allPlugins.forEach(function(plugin, i, arr) {
 		count++;
 		if (typeof plugin !== 'object') {
 			plugin.name = plugin;
 		}
 		let pluginUrl = (plugin.name.indexOf(":/\/") == -1) ? url + 'sdkjs-plugins/content/' + plugin.name + '/' : plugin.name;
-		let confUrl = pluginUrl + 'config.json?_v=' + Date.now();
+		let confUrl = pluginUrl + 'config.json';
 		makeRequest(confUrl, 'GET', null, null, true).then(
-			function (response) {
+			function(response) {
 				let config = JSON.parse(response);
-				config.url = pluginUrl + 'config.json';
+				config.url = confUrl;
 				config.baseUrl = pluginUrl;
 				arr[i] = config;
-
+				
 				makeRequest(pluginUrl + 'translations/langs.json', 'GET', null, null, false).then(
-					function (response) {
-						let supportedLangs = [getTranslated('English')];
+					function(response) {
+						let supportedLangs = [ getTranslated('English') ];
 						let arr = JSON.parse(response);
-						arr.forEach(function (full) {
+						arr.forEach(function(full) {
 							let short = full.split('-')[0];
 							for (let i = 0; i < languages.length; i++) {
 								// detect only full language (because we can make mistake with some langs. for instance: "pt-PT" and "pt-BR")
 								if (languages[i][0] == full /*|| languages[i][1] == short*/) {
-									supportedLangs.push(getTranslated(languages[i][2]));
+									supportedLangs.push( getTranslated( languages[i][2] ) );
 								}
 							}
 						});
 						if (supportedLangs.length > 1)
 							config.languages = supportedLangs;
 					},
-					function (error) {
-						config.languages = [getTranslated('English')];
+					function(error) {
+						config.languages = [ getTranslated('English') ];
 					}
 				);
 				makeRequest(pluginUrl + 'CHANGELOG.md', 'GET', null, null, false).then(
-					function (response) {
+					function(response) {
 						let settings = getMarkedSetting();
 						let value = parseChangelog(response);
 						let lexed = marked.lexer(value, settings);
@@ -614,7 +619,7 @@ function getAllPluginsData(bFirstRender, bshowMarketplace) {
 				if (!count)
 					endPluginsDataLoading(bFirstRender, bshowMarketplace, Unloaded);
 			},
-			function (err) {
+			function(err) {
 				count--;
 				Unloaded.push(i);
 				createError(new Error('Problem with loading plugin config.\nConfig: ' + confUrl));
@@ -635,7 +640,7 @@ function getDiscussion(config) {
 	// get discussion page
 	if (isLocal && window.AscSimpleRequest && window.AscSimpleRequest.createRequest) {
 		makeDesktopRequest(config.discussionUrl).then(
-			function (data) {
+			function(data) {
 				if (data.status == 'success') {
 					config.rating = parseRatingPage(data.response.responseText);
 				}
@@ -643,7 +648,7 @@ function getDiscussion(config) {
 				if (!discussionCount)
 					showRating();
 			},
-			function (err) {
+			function(err) {
 				createError(err.response, false);
 				discussionCount--;
 				if (!discussionCount)
@@ -652,14 +657,14 @@ function getDiscussion(config) {
 		);
 	} else {
 		let body = { target: config.discussionUrl };
-		makeRequest(proxyUrl, 'POST', null, body, false).then(function (data) {
+		makeRequest(proxyUrl, 'POST', null, body, false).then(function(data) {
 			data = JSON.parse(data);
 			config.rating = parseRatingPage(data);
 			discussionCount--;
 			if (!discussionCount)
 				showRating();
-		}, function (err) {
-			createError(new Error('Problem with loading rating'), true);
+		}, function(err) {
+			createError( new Error('Problem with loading rating'), true);
 			discussionCount--;
 			if (!discussionCount)
 				showRating();
@@ -671,6 +676,7 @@ function endPluginsDataLoading(bFirstRender, bshowMarketplace, Unloaded) {
 	// console.log('getAllPluginsData: ' + (Date.now() - start));
 	removeUnloaded(Unloaded);
 	sortPlugins(true, false, 'name');
+	hasAllPluginsData = true;
 	isPluginLoading = false;
 	if (bFirstRender)
 		showMarketplace();
@@ -679,24 +685,24 @@ function endPluginsDataLoading(bFirstRender, bshowMarketplace, Unloaded) {
 };
 
 function getInstalledLanguages() {
-	installedPlugins.forEach(function (pl) {
+	installedPlugins.forEach(function(pl) {
 		makeRequest(pl.obj.baseUrl + 'translations/langs.json', 'GET', null, null, true).then(
-			function (response) {
-				let supportedLangs = [getTranslated('English')];
+			function(response) {
+				let supportedLangs = [ getTranslated('English') ];
 				let arr = JSON.parse(response);
-				arr.forEach(function (full) {
+				arr.forEach(function(full) {
 					let short = full.split('-')[0];
 					for (let i = 0; i < languages.length; i++) {
 						if (languages[i][0] == short || languages[i][1] == short) {
-							supportedLangs.push(getTranslated(languages[i][2]));
+							supportedLangs.push( getTranslated( languages[i][2] ) );
 						}
 					}
 				});
 				if (supportedLangs.length > 1)
 					pl.obj.languages = supportedLangs;
 			},
-			function (error) {
-				pl.obj.languages = [getTranslated('English')];
+			function(error) {
+				pl.obj.languages = [ getTranslated('English') ];
 			}
 		)
 	});
@@ -734,11 +740,11 @@ function showListofPlugins(bAll, sortedArr) {
 	}
 
 	if (arr.length) {
-		arr.forEach(function (plugin) {
+		arr.forEach(function(plugin) {
 			if (plugin && plugin.guid)
 				createPluginDiv(plugin, !bAll);
 		});
-		setTimeout(function () { if (PsMain) PsMain.update(); toogleLoader(false); });
+		setTimeout(function(){if (PsMain) PsMain.update(); toogleLoader(false);});
 	} else {
 		// if no istalled plugins and available plugins button was clicked
 		let notification = Array.isArray(sortedArr) ? 'Nothing was found for this query.' : bAll ? 'Problem with loading plugins.' : 'No installed plugins.';
@@ -787,13 +793,13 @@ function createPluginDiv(plugin, bInstalled) {
 		zoom = (1 / devicePixelRatio);
 	if (scale.devicePR > 2)
 		zoom = (1 / devicePixelRatio) * 2;
-	div.style.border = ((zoom > 1 ? 1 : zoom)) + 'px solid ' + (themeType == 'ligh' ? '#c0c0c0' : '#666666');
-
-	div.onmouseenter = function (event) {
+	div.style.border = ((zoom > 1 ? 1 : zoom)) +'px solid ' + (themeType == 'ligh' ? '#c0c0c0' : '#666666');
+	
+	div.onmouseenter = function(event) {
 		event.target.classList.add('div_item_hovered');
 	};
 
-	div.onmouseleave = function (event) {
+	div.onmouseleave = function(event) {
 		event.target.classList.remove('div_item_hovered');
 	};
 
@@ -829,36 +835,36 @@ function createPluginDiv(plugin, bInstalled) {
 				elements.btnUpdateAll.classList.remove('hidden');
 		}
 	}
-
+	
 	let variation = plugin.variations[0];
-	let name = (bTranslate && plugin.nameLocale && (plugin.nameLocale[lang] || plugin.nameLocale[shortLang])) ? (plugin.nameLocale[lang] || plugin.nameLocale[shortLang]) : plugin.name;
-	let description = (bTranslate && variation.descriptionLocale && (variation.descriptionLocale[lang] || variation.descriptionLocale[shortLang])) ? (variation.descriptionLocale[lang] || variation.descriptionLocale[shortLang]) : variation.description;
+	let name = ( bTranslate && plugin.nameLocale && ( plugin.nameLocale[lang] || plugin.nameLocale[shortLang] ) ) ? ( plugin.nameLocale[lang] || plugin.nameLocale[shortLang] ) : plugin.name;
+	let description = ( bTranslate && variation.descriptionLocale && ( variation.descriptionLocale[lang] || variation.descriptionLocale[shortLang] ) ) ? ( variation.descriptionLocale[lang] || variation.descriptionLocale[shortLang] ) : variation.description;
 	let bg = variation.store && variation.store.background ? variation.store.background[themeType] : defaultBG;
-	let additional = bNotAvailable ? 'disabled title="' + getTranslated(messages.versionWarning) + '"' : '';
+	let additional = bNotAvailable ? 'disabled title="' + getTranslated(messages.versionWarning) + '"'  : '';
 	let template = '<div class="div_image" style="background: ' + bg + '">' +
-		'<img id="img_' + plugin.guid + '" class="plugin_icon" style="display:none" data-guid="' + plugin.guid + '" src="' + getImageUrl(plugin.guid, false, true, ('img_' + plugin.guid)) + '">' +
-		'</div>' +
-		'<div class="div_description">' +
-		'<span class="span_name">' + name + '</span>' +
-		'<span class="span_description">' + description + '</span>' +
-		'</div>' +
-		'<div class="div_footer">' +
-		'<div class="advanced_info">' +
-		(plugin.rating
-			? '<div class="flex div_rating_card"> <div class="div_rating"> <div class="stars_grey"></div> <div class="stars_orange" style="width:' + plugin.rating.percent + ';"></div> </div> <span style="margin-left: 5px;">' + plugin.rating.total + '</span> </div>'
-			: '<div class="flex div_rating_card"> <div class="div_rating"> <div class="stars_grey"></div> <div class="stars_orange" style="width:0;"></div> </div> <span style="margin-left: 5px;"></span> </div>'
-		) +
-		(bHasUpdate
-			? '<span class="span_update ' + (!bRemoved ? "" : "hidden") + '">' + getTranslated("Update") + '</span>'
-			: '<div></div>'
-		) +
-		'</div>' +
-		((installed && !bRemoved)
-			? (installed.canRemoved ? '<button class="btn-text-default btn_item btn_remove" onclick="onClickRemove(event.target, event)" ' + (bNotAvailable ? "dataDisabled=\"disabled\"" : "") + '>' + getTranslated("Remove") + '</button>' : '<div style="height:20px"></div>')
-			: '<button class="btn_item btn-text-default btn_install" onclick="onClickInstall(event.target, event)"' + additional + '>' + getTranslated("Install") + '</button>'
-		)
-		+
-		'</div>';
+						'<img id="img_'+plugin.guid+'" class="plugin_icon" style="display:none" data-guid="' + plugin.guid + '" src="' + getImageUrl(plugin.guid, false, true, ('img_' + plugin.guid) ) + '">' +
+					'</div>' +
+					'<div class="div_description">'+
+						'<span class="span_name">' + name + '</span>' +
+						'<span class="span_description">' + description + '</span>' +
+					'</div>' +
+					'<div class="div_footer">' +
+						'<div class="advanced_info">' +
+							(plugin.rating
+								? '<div class="flex div_rating_card"> <div class="div_rating"> <div class="stars_grey"></div> <div class="stars_orange" style="width:' + plugin.rating.percent + ';"></div> </div> <span style="margin-left: 5px;">' + plugin.rating.total + '</span> </div>'
+								: '<div class="flex div_rating_card"> <div class="div_rating"> <div class="stars_grey"></div> <div class="stars_orange" style="width:0;"></div> </div> <span style="margin-left: 5px;"></span> </div>'
+							) +
+							(bHasUpdate
+								? '<span class="span_update ' + (!bRemoved ? "" : "hidden") + '">' + getTranslated("Update") + '</span>'
+								: '<div></div>'
+							) +
+						'</div>' +
+						( (installed && !bRemoved)
+							? (installed.canRemoved ? '<button class="btn-text-default btn_item btn_remove" onclick="onClickRemove(event.target, event)" ' + (bNotAvailable ? "dataDisabled=\"disabled\"" : "") +'>' + getTranslated("Remove") + '</button>' : '<div style="height:20px"></div>')
+							: '<button class="btn_item btn-text-default btn_install" onclick="onClickInstall(event.target, event)"' + additional + '>'  + getTranslated("Install") + '</button>'
+						)
+						+
+					'</div>';
 	div.innerHTML = template;
 	elements.divMain.appendChild(div);
 	if (PsMain) PsMain.update();
@@ -866,7 +872,7 @@ function createPluginDiv(plugin, bInstalled) {
 
 function showRating() {
 	// console.log('showRating: ' + (Date.now() - start));
-	allPlugins.forEach(function (plugin) {
+	allPlugins.forEach(function(plugin) {
 		let div = document.getElementById(plugin.guid);
 		if (plugin.rating && div) {
 			div = div.lastElementChild.firstElementChild.firstElementChild;
@@ -908,19 +914,19 @@ function onClickInstall(target, event) {
 	let installed = findPlugin(false, guid);
 	if (!plugin && !installed) {
 		// if we are here if means that plugin tab is opened, plugin is uninstalled and we don't have internet connection
-		sendMessage({ type: "showButton", show: false });
+		sendMessage( { type : "showButton", show : false } );
 		onClickBack();
 		toogleLoader(false);
 	}
 	let message = {
-		type: 'install',
-		url: (installed ? installed.obj.baseUrl : plugin.url),
-		guid: guid,
-		config: (installed ? installed.obj : plugin)
+		type : 'install',
+		url : (installed ? installed.obj.baseUrl : plugin.url),
+		guid : guid,
+		config : (installed ? installed.obj : plugin)
 	};
 	// we should do that because we have some problem when desktop is loading plugin
 	if (isLocal) {
-		setTimeout(function () {
+		setTimeout(function() {
 			sendMessage(message);
 		}, 200);
 	} else {
@@ -941,14 +947,14 @@ function onClickUpdate(target) {
 	let plugin = findPlugin(true, guid);
 	updateCount++;
 	let message = {
-		type: 'update',
-		url: plugin.url,
-		guid: guid,
-		config: plugin
+		type : 'update',
+		url : plugin.url,
+		guid : guid,
+		config : plugin
 	};
 	// we should do that because we have some problem when desktop is loading plugin
 	if (isLocal) {
-		setTimeout(function () {
+		setTimeout(function() {
 			sendMessage(message);
 		}, 200);
 	} else {
@@ -967,9 +973,9 @@ function onClickRemove(target, event) {
 	}
 	let guid = target.parentNode.parentNode.getAttribute('data-guid');
 	let message = {
-		type: 'remove',
-		guid: guid,
-		backup: needBackupPlugin(guid)
+		type : 'remove',
+		guid : guid,
+		backup : needBackupPlugin(guid)
 	};
 	sendMessage(message);
 };
@@ -986,16 +992,16 @@ function onClickUpdateAll() {
 	clearTimeout(timeout);
 	timeout = setTimeout(toogleLoader, 200, true, "Updating");
 	elements.btnUpdateAll.classList.add('hidden');
-	let arr = allPlugins.filter(function (el) {
+	let arr = allPlugins.filter(function(el) {
 		return el.bHasUpdate;
 	});
 	updateCount = arr.length;
-	arr.forEach(function (plugin) {
+	arr.forEach(function(plugin) {
 		let message = {
-			type: 'update',
-			url: plugin.url,
-			guid: plugin.guid,
-			config: plugin
+			type : 'update',
+			url : plugin.url,
+			guid : plugin.guid,
+			config : plugin
 		};
 		sendMessage(message);
 	});
@@ -1014,7 +1020,7 @@ function onClickItem() {
 	let installed = findPlugin(false, guid);
 	let plugin = findPlugin(true, guid);
 	let discussionUrl = plugin ? plugin.discussionUrl : null;
-
+	
 	if (plugin && plugin.rating) {
 		elements.divRatingLink.removeAttribute('title');
 		elements.totalVotes.innerText = plugin.rating.total;
@@ -1029,7 +1035,7 @@ function onClickItem() {
 			elements.divRatingLink.setAttribute('title', getTranslated('No disscussion page for this plugin.'));
 	}
 
-	if (!plugin || (isLocal && installed && plugin.baseUrl.includes('file:'))) {
+	if ( !plugin || ( isLocal && installed && plugin.baseUrl.includes('file:') ) ) {
 		elements.divGitLink.classList.add('hidden');
 		plugin = installed.obj;
 	} else {
@@ -1041,7 +1047,7 @@ function onClickItem() {
 
 	if (bCorrectUrl && plugin.variations[0].store && plugin.variations[0].store.screenshots && plugin.variations[0].store.screenshots.length) {
 		let arrScreens = plugin.variations[0].store.screenshots;
-		arrScreens.forEach(function (screenUrl, ind) {
+		arrScreens.forEach(function(screenUrl, ind) {
 			let url = plugin.baseUrl + screenUrl;
 			let container = document.createElement('div');
 			container.className = 'mySlides fade';
@@ -1053,8 +1059,8 @@ function onClickItem() {
 			if (arrScreens.length > 1) {
 				let point = document.createElement('span');
 				point.className = 'dot';
-				point.onclick = function () {
-					currentSlide(ind + 1);
+				point.onclick = function() {
+					currentSlide(ind+1);
 				};
 				document.getElementById('points_container').appendChild(point);
 			}
@@ -1071,8 +1077,8 @@ function onClickItem() {
 	}
 
 	let bHasUpdate = (pluginDiv.lastChild.firstChild.lastChild.tagName === 'SPAN' && !pluginDiv.lastChild.firstChild.lastChild.classList.contains('hidden'));
-
-	if ((installed && installed.obj.version) || plugin.version) {
+	
+	if ( (installed && installed.obj.version) || plugin.version ) {
 		elements.spanVersion.innerText = (installed && installed.obj.version ? installed.obj.version : plugin.version);
 		elements.divVersion.classList.remove('hidden');
 	} else {
@@ -1081,14 +1087,14 @@ function onClickItem() {
 		hiddenCounter++;
 	}
 
-	if ((installed && installed.obj.minVersion) || plugin.minVersion) {
+	if ( (installed && installed.obj.minVersion) || plugin.minVersion ) {
 		elements.spanMinVersion.innerText = (installed && installed.obj.minVersion ? installed.obj.minVersion : plugin.minVersion);
 		elements.divMinVersion.classList.remove('hidden');
 	} else {
 		elements.spanMinVersion.innerText = '';
 		elements.divMinVersion.classList.add('hidden');
 		hiddenCounter++;
-	}
+	}	
 
 	if (plugin.languages) {
 		elements.spanLanguages.innerText = plugin.languages.join(', ') + '.';
@@ -1107,8 +1113,8 @@ function onClickItem() {
 		document.getElementById('div_changelog_preview').innerHTML = '';
 	}
 
-	let pluginUrl = plugin.baseUrl.replace(OOMarketplaceUrl, (OOIO + 'tree/master/'));
-
+	let pluginUrl = plugin.baseUrl.replace(OOMarketplaceUrl, (OOIO + 'tree/master/') );
+	
 	// TODO problem with plugins icons (different margin from top)
 	elements.divSelected.setAttribute('data-guid', guid);
 	// we do this, because new icons for store are too big for use it in this window.
@@ -1127,7 +1133,7 @@ function onClickItem() {
 		elements.linkReadme.setAttribute('href', '');
 		elements.divReadme.classList.add('hidden');
 	}
-
+	
 	if (discussionUrl)
 		elements.discussionLink.setAttribute('href', discussionUrl);
 	else
@@ -1152,7 +1158,7 @@ function onClickItem() {
 	}
 
 	if (pluginDiv.lastChild.lastChild.hasAttribute('disabled')) {// || pluginDiv.lastChild.lastChild.hasAttribute('dataDisabled')) {
-		elements.btnInstall.setAttribute('disabled', '');
+		elements.btnInstall.setAttribute('disabled','');
 		elements.btnInstall.setAttribute('title', getTranslated(messages.versionWarning));
 	} else {
 		elements.btnInstall.removeAttribute('disabled');
@@ -1170,7 +1176,7 @@ function onClickItem() {
 	elements.divSelectedMain.classList.remove('hidden');
 	elements.divBody.classList.add('hidden');
 	setDivHeight();
-	sendMessage({ type: "showButton", show: true });
+	sendMessage( { type : "showButton", show : true } );
 	// elements.arrow.classList.remove('hidden');
 };
 
@@ -1185,12 +1191,12 @@ function onClickBack() {
 	elements.divSelected.classList.add('hidden');
 	elements.divSelectedMain.classList.add('hidden');
 	elements.divBody.classList.remove('hidden');
-	if (PsMain) PsMain.update();
+	if(PsMain) PsMain.update();
 };
 
 function onSelectPreview(target, type) {
 	// change mode of preview
-	if (!target.classList.contains('span_selected')) {
+	if ( !target.classList.contains('span_selected') ) {
 		$(".span_selected").removeClass("span_selected");
 		target.classList.add("span_selected");
 		$(".div_selected_preview").addClass("hidden");
@@ -1244,7 +1250,7 @@ function createError(err, bDontShow) {
 	background.appendChild(span);
 	divErr.appendChild(background);
 	divErr.classList.remove('hidden');
-	setTimeout(function () {
+	setTimeout(function() {
 		// remove error after 5 seconds
 		$(background).remove();
 		divErr.classList.add('hidden');
@@ -1266,7 +1272,7 @@ function setDivHeight() {
 	}
 };
 
-window.onresize = function (bForce) {
+window.onresize = function(bForce) {
 	if (scale.devicePR !== window.devicePixelRatio || bForce) {
 		let html = document.getElementsByTagName('html')[0];
 		scale.devicePR = window.devicePixelRatio;
@@ -1290,7 +1296,7 @@ window.onresize = function (bForce) {
 			html.style.zoom = revZoom;
 			// html.style['-moz-transform'] = 'scale('+ revZoom +')';
 		}
-		$('.div_item').css('border', ((revZoom > 1 ? 1 : revZoom) + 'px solid ' + (themeType == 'ligh' ? '#c0c0c0' : '#666666')));
+		$('.div_item').css('border', ((revZoom > 1 ? 1 : revZoom) +'px solid ' + (themeType == 'ligh' ? '#c0c0c0' : '#666666')));
 	}
 	if (PsChangelog) PsChangelog.update();
 };
@@ -1310,7 +1316,7 @@ function calculateScale() {
 	for (let i = 1, len = supportedScaleValues.length; i < len; i++) {
 		if (true) {
 			if (Math.abs(supportedScaleValues[i] - scale.devicePR) > 0.0001) {
-				if ((supportedScaleValues[i] - 0.0501) > (scale.devicePR - 0.0001))
+				if ( (supportedScaleValues[i] - 0.0501) > (scale.devicePR - 0.0001))
 					break;
 			}
 		}
@@ -1329,7 +1335,7 @@ function changeIcons() {
 	let arr = document.getElementsByClassName('plugin_icon');
 	for (let i = 0; i < arr.length; i++) {
 		let guid = arr[i].getAttribute('data-guid');
-		arr[i].setAttribute('src', getImageUrl(guid, false, true, ('img_' + guid)));
+		arr[i].setAttribute( 'src', getImageUrl( guid, false, true, ('img_' + guid) ) );
 	}
 	let guid = elements.imgIcon.parentNode.parentNode.parentNode.getAttribute('data-guid');
 	elements.imgIcon.setAttribute('src', getImageUrl(guid, false, true, 'img_icon'));
@@ -1340,7 +1346,7 @@ function getTranslation() {
 	if (shortLang != "en") {
 		isTranslationLoading = true
 		makeRequest('./translations/langs.json', 'GET', null, null, true).then(
-			function (response) {
+			function(response) {
 				let arr = JSON.parse(response);
 				let fullName, shortName;
 				for (let i = 0; i < arr.length; i++) {
@@ -1355,14 +1361,14 @@ function getTranslation() {
 				if (fullName || shortName) {
 					bTranslate = true;
 					makeRequest('./translations/' + (fullName || shortName) + '.json', 'GET', null, null, true).then(
-						function (res) {
+						function(res) {
 							// console.log('getTranslation: ' + (Date.now() - start));
 							translate = JSON.parse(res);
 							isTranslationLoading = false;
 							onTranslate();
 						},
-						function (err) {
-							createError(new Error('Cannot load translation for current language.'));
+						function(err) {
+							createError( new Error('Cannot load translation for current language.') );
 							isTranslationLoading = false;
 							showMarketplace();
 						}
@@ -1370,10 +1376,10 @@ function getTranslation() {
 				} else {
 					isTranslationLoading = false;
 					showMarketplace();
-				}
+				}	
 			},
-			function (err) {
-				createError(new Error('Cannot load translations list file.'));
+			function(err) {
+				createError( new Error('Cannot load translations list file.') );
 				isTranslationLoading = false;
 				showMarketplace();
 			}
@@ -1433,7 +1439,7 @@ function showMarketplace() {
 			toogleView(elements.btnAvailablePl, elements.btnMarketplace, messages.linkManually, false, false);
 			toogleLoader(false);
 		}
-
+			
 		catFiltred = allPlugins;
 		// elements.divBody.classList.remove('hidden');
 		elements.divBody.classList.remove('transparent');
@@ -1447,7 +1453,7 @@ function showMarketplace() {
 function createSelect() {
 	$('#select_categories').select2({
 		minimumResultsForSearch: Infinity
-	}).on('change', function (event) {
+	}).on('change', function(event) {
 		filterByCategory(event.currentTarget.value);
 	});
 
@@ -1491,15 +1497,15 @@ function getImageUrl(guid, bNotForStore, bSetSize, id) {
 		}
 	}
 
-	if ((!plugin || !isLocal) && allPlugins) {
+	if ( ( !plugin || !isLocal ) && allPlugins) {
 		plugin = findPlugin(true, guid);
 		if (plugin)
 			baseUrl = plugin.baseUrl;
 	}
 	// github doesn't allow to use "http" or "file" as the URL for an image
-	if (plugin && (baseUrl.includes('https://') || isLocal)) {
+	if ( plugin && ( baseUrl.includes('https://') || isLocal) ) {
 		let variation = plugin.variations[0];
-
+		
 		if (!bNotForStore && variation.store && variation.store.icons) {
 			// icons are in config of store field (work only with new scheme)
 			// it's an object with 2 fields (for dark and light theme), which contain route to icons folder
@@ -1508,7 +1514,7 @@ function getImageUrl(guid, bNotForStore, bSetSize, id) {
 			// it's old scheme. There could be an array with objects which have theme field or an array from one object without theme field
 			let icon = variation.icons2[0];
 			for (let i = 1; i < variation.icons2.length; i++) {
-				if (themeType.includes(variation.icons2[i].style)) {
+				if ( themeType.includes(variation.icons2[i].style) ) {
 					icon = variation.icons2[i];
 					break;
 				}
@@ -1523,11 +1529,11 @@ function getImageUrl(guid, bNotForStore, bSetSize, id) {
 				curIcon = baseUrl + variation.icons[themeType] + iconScale;
 			} else {
 				// old scheme
-				if (typeof (variation.icons[0]) == 'object') {
+				if (typeof(variation.icons[0]) == 'object' ) {
 					// old scheme and icons like icons2 above
 					let icon = variation.icons[0];
 					for (let i = 1; i < variation.icons.length; i++) {
-						if (themeType.includes(variation.icons[i].style)) {
+						if ( themeType.includes(variation.icons[i].style) ) {
 							icon = variation.icons[i];
 							break;
 						}
@@ -1538,34 +1544,34 @@ function getImageUrl(guid, bNotForStore, bSetSize, id) {
 					curIcon = baseUrl + (scale.value >= 1.2 ? variation.icons[1] : variation.icons[0]);
 				}
 			}
-		}
+		}	
 	}
 
 	if (bSetSize) {
 		makeRequest(curIcon, 'GET', 'blob', null, true).then(
 			function (res) {
 				let reader = new FileReader();
-				reader.onloadend = function () {
-					let imageUrl = reader.result;
+				reader.onloadend = function() {
+					let imageUrl = reader.result;		
 					let img = document.createElement('img');
 					img.setAttribute('src', imageUrl);
 					img.onload = function () {
 						let icon = document.getElementById(id);
-						icon.style.width = ((img.width / scale.value) >> 0) + 'px';
-						icon.style.height = ((img.height / scale.value) >> 0) + 'px';
+						icon.style.width = ( (img.width/scale.value) >> 0 ) + 'px';
+						icon.style.height = ( (img.height/scale.value) >> 0 ) + 'px';
 						icon.style.display = '';
 					}
-
+					
 				}
 				reader.readAsDataURL(res);
 			},
-			function (error) {
+			function(error) {
 				// it's because we have a new maket for error messages
 				createError(error, true);
 			}
 		);
 	}
-
+	
 	return curIcon;
 };
 
@@ -1577,14 +1583,14 @@ function getUrlSearchValue(key) {
 		if (-1 != pos1) {
 			pos1 += key.length + 1;
 			let pos2 = search.indexOf("&", pos1);
-			res = search.substring(pos1, (pos2 != -1 ? pos2 : search.length))
+			res = search.substring(pos1, (pos2 != -1 ? pos2 : search.length) )
 		}
 	}
 	return res;
 };
 
 function toogleView(current, oldEl, text, bAll, bForce) {
-	if (!current.classList.contains('btn_toolbar_active') || bForce) {
+	if ( !current.classList.contains('btn_toolbar_active') || bForce ) {
 		elements.inpSearch.value = '';
 		founded = [];
 		oldEl.classList.remove('btn_toolbar_active');
@@ -1592,10 +1598,10 @@ function toogleView(current, oldEl, text, bAll, bForce) {
 		elements.linkNewPlugin.innerHTML = getTranslated(text);
 		let toolbar = document.getElementById('toolbar_tools');
 		let flag = !isLocal && !isOnline;
-		if ((bAll && (!isOnline || isPluginLoading)) || flag) {
+		if ( ( bAll && (!isOnline || isPluginLoading) ) || flag) {
 			$('.div_notification').remove();
 			$('.div_item').remove();
-			setTimeout(function () { if (PsMain) PsMain.update() });
+			setTimeout(function(){if (PsMain) PsMain.update()});
 			toolbar.classList.add('hidden');
 			createNotification('No Internet Connection.', 'Problem with loading some resources')
 		} else {
@@ -1648,7 +1654,7 @@ function sortPlugins(bAll, bInst, type) {
 				let guarded = [];
 				let removed = [];
 				let arr = [];
-				installedPlugins.forEach(function (pl) {
+				installedPlugins.forEach(function(pl) {
 					if (!pl.canRemoved)
 						guarded.push(pl);
 					else if (pl.removed)
@@ -1659,15 +1665,15 @@ function sortPlugins(bAll, bInst, type) {
 				installedPlugins = guarded.concat(arr, removed);
 			}
 			break;
-
+	
 		default:
 			if (bAll) {
-				allPlugins.sort(function (a, b) {
+				allPlugins.sort(function(a, b) {
 					return a.name.localeCompare(b.name);
 				});
 			}
 			if (bInst) {
-				installedPlugins.sort(function (a, b) {
+				installedPlugins.sort(function(a, b) {
 					return a.obj.name.localeCompare(b.obj.name);
 				});
 			}
@@ -1677,12 +1683,12 @@ function sortPlugins(bAll, bInst, type) {
 
 function makeSearch(val) {
 	clearTimeout(searchTimeout);
-	searchTimeout = setTimeout(function () {
+	searchTimeout = setTimeout(function() {
 		let plugins = catFiltred;
 		let bUpdate = false;
-		let arr = plugins.filter(function (el) {
+		let arr = plugins.filter(function(el) {
 			let plugin = el.obj || el;
-			let name = (plugin.nameLocale && (plugin.nameLocale[lang] || plugin.nameLocale[shortLang])) ? (plugin.nameLocale[lang] || plugin.nameLocale[shortLang]) : plugin.name;
+			let name = (plugin.nameLocale && ( plugin.nameLocale[lang] || plugin.nameLocale[shortLang] ) ) ? ( plugin.nameLocale[lang] || plugin.nameLocale[shortLang] ) : plugin.name;
 			return name.toLowerCase().includes(val);
 		});
 
@@ -1709,7 +1715,7 @@ function filterByCategory(category) {
 	let plugins = elements.btnMarketplace.classList.contains('btn_toolbar_active') ? allPlugins : installedPlugins;
 	let arr;
 	if (category != "all") {
-		arr = plugins.filter(function (plugin) {
+		arr = plugins.filter(function(plugin) {
 			let variation = plugin.variations ? plugin.variations[0] : plugin.obj.variations[0];
 			let arrCat = (variation.store && variation.store.categories) ? variation.store.categories : [];
 			return arrCat.includes(category);
@@ -1725,31 +1731,31 @@ function filterByCategory(category) {
 };
 
 function removeUnloaded(unloaded) {
-	unloaded.forEach(function (el) {
+	unloaded.forEach(function(el){
 		allPlugins.splice(el, 1);
 	})
 };
 
 function findPlugin(bAll, guid) {
 	let res = bAll
-		? allPlugins.find(function (el) { return el.guid === guid })
-		: installedPlugins.find(function (el) { return el.guid === guid });
+			? allPlugins.find(function(el){return el.guid === guid})
+			: installedPlugins.find(function(el){return el.guid === guid});
 	return res;
 };
 
 function changeAfterInstallOrRemove(bInstall, guid, bHasLocal) {
 	let btn = this.document.getElementById(guid).lastChild.lastChild;
-	btn.innerHTML = getTranslated((bInstall ? 'Remove' : 'Install'));
-	btn.classList.add((bInstall ? 'btn_remove' : 'btn_install'));
-	btn.classList.remove((bInstall ? 'btn_install' : 'btn_remove'));
-	btn.onclick = function (e) {
+	btn.innerHTML = getTranslated( ( bInstall ? 'Remove' : 'Install' ) );
+	btn.classList.add( ( bInstall ? 'btn_remove' : 'btn_install' ) );
+	btn.classList.remove( ( bInstall ? 'btn_install' : 'btn_remove' ) );
+	btn.onclick = function(e) {
 		if (bInstall)
 			onClickRemove(e.target, e);
 		else
 			onClickInstall(e.target, e);
 	};
 	// We need to keep the ability to install the local version that has been removed (maybe we should change the button)
-	if (!bInstall && btn.hasAttribute('dataDisabled') && !bHasLocal) {
+	if ( !bInstall && btn.hasAttribute('dataDisabled') && !bHasLocal ) {
 		btn.setAttribute('title', getTranslated(messages.versionWarning));
 		btn.setAttribute('disabled', '');
 	}
@@ -1763,8 +1769,8 @@ function changeAfterInstallOrRemove(bInstall, guid, bHasLocal) {
 	}
 
 	if (!elements.divSelected.classList.contains('hidden')) {
-		this.document.getElementById((bInstall ? 'btn_install' : 'btn_remove')).classList.add('hidden');
-		this.document.getElementById((bInstall ? 'btn_remove' : 'btn_install')).classList.remove('hidden');
+		this.document.getElementById( ( bInstall ? 'btn_install' : 'btn_remove' ) ).classList.add('hidden');
+		this.document.getElementById( ( bInstall ? 'btn_remove' : 'btn_install' ) ).classList.remove('hidden');
 		if (bInstall && bHasUpdate)
 			this.document.getElementById('btn_update').classList.remove('hidden');
 		else
@@ -1777,10 +1783,10 @@ function checkInternet() {
 	// url for check internet connection
 	let url = 'https://onlyoffice.github.io/store/translations/langs.json';
 	makeRequest(url, 'GET', null, null, true).then(
-		function () {
+		function() {
 			isOnline = true;
 			let bShowSelected = elements.divSelected && !elements.divSelected.classList.contains('hidden');
-			let bshowMarketplace = bShowSelected ? false : ((elements.btnMarketplace && elements.btnMarketplace.classList.contains('btn_toolbar_active')) ? true : false);
+			let bshowMarketplace = bShowSelected ? false : ( ( elements.btnMarketplace && elements.btnMarketplace.classList.contains('btn_toolbar_active') ) ? true : false );
 			if (!allPlugins.length) {
 				fetchAllPlugins(interval === null, bshowMarketplace);
 			} else if (bShowSelected) {
@@ -1802,15 +1808,15 @@ function checkInternet() {
 function handeNoInternet() {
 	isOnline = false;
 	if (!interval) {
-		interval = setInterval(function () {
+		interval = setInterval(function() {
 			checkInternet();
 		}, 5000);
 	}
 
 	let bshowMarketplace = elements.btnMarketplace && elements.btnMarketplace.classList.contains('btn_toolbar_active');
 
-	if ((bshowMarketplace || !isLocal) && elements.divSelected && !elements.divSelected.classList.contains('hidden')) {
-		sendMessage({ type: "showButton", show: false });
+	if ( (bshowMarketplace || !isLocal) && elements.divSelected && !elements.divSelected.classList.contains('hidden') ) {
+		sendMessage( { type : "showButton", show : false } );
 		onClickBack();
 	}
 
@@ -1834,12 +1840,12 @@ function parseRatingPage(data) {
 			let parser = new DOMParser();
 			let doc = parser.parseFromString(data, "text/html");
 			// we will have a problem if github change their page
-			let first = Number(doc.getElementById('result-row-1').childNodes[1].childNodes[3].innerText.replace(/[\n\s%]/g, ''));
-			let second = Number(doc.getElementById('result-row-2').childNodes[1].childNodes[3].innerText.replace(/[\n\s%]/g, ''));
-			let third = Number(doc.getElementById('result-row-3').childNodes[1].childNodes[3].innerText.replace(/[\n\s%]/g, ''));
-			let fourth = Number(doc.getElementById('result-row-4').childNodes[1].childNodes[3].innerText.replace(/[\n\s%]/g, ''));
-			let fifth = Number(doc.getElementById('result-row-5').childNodes[1].childNodes[3].innerText.replace(/[\n\s%]/g, ''));
-			let total = Number(doc.getElementsByClassName('text-small color-fg-subtle')[0].childNodes[1].firstChild.textContent.replace(/[\n\sa-z]/g, ''));
+			let first = Number(doc.getElementById('result-row-1').childNodes[1].childNodes[3].innerText.replace(/[\n\s%]/g,''));
+			let second = Number(doc.getElementById('result-row-2').childNodes[1].childNodes[3].innerText.replace(/[\n\s%]/g,''));
+			let third = Number(doc.getElementById('result-row-3').childNodes[1].childNodes[3].innerText.replace(/[\n\s%]/g,''));
+			let fourth = Number(doc.getElementById('result-row-4').childNodes[1].childNodes[3].innerText.replace(/[\n\s%]/g,''));
+			let fifth = Number(doc.getElementById('result-row-5').childNodes[1].childNodes[3].innerText.replace(/[\n\s%]/g,''));
+			let total = Number(doc.getElementsByClassName('text-small color-fg-subtle')[0].childNodes[1].firstChild.textContent.replace(/[\n\sa-z]/g,''));
 			first = Math.ceil(total * first / 100) * 5;   // it's 5 stars
 			second = Math.ceil(total * second / 100) * 4; // it's 4 stars
 			third = Math.ceil(total * third / 100) * 3;   // it's 3 stars
@@ -1866,18 +1872,18 @@ function parseChangelog(data) {
 
 	let indLast = arr.length - 1;
 	let end = arr[0].indexOf('\n\n');
-	let firstVersion = getPluginVersion(arr[0].slice(0, end));
+	let firstVersion = getPluginVersion( arr[0].slice(0, end) );
 	end = arr[indLast].indexOf('\n\n');
-	let lastVersion = getPluginVersion(arr[indLast].slice(0, end));
+	let lastVersion = getPluginVersion( arr[indLast].slice(0, end) );
 	if (lastVersion > firstVersion)
 		arr = arr.reverse();
 
-	return ('## ' + arr.join('\n\n## '));
+	return ( '## ' + arr.join('\n\n## ') );
 };
 
 function checkNoUpdated(bRemove) {
 	// todo it's a temp solution. We will change a work with updation in the feature.
-	if ((!elements.btnUpdateAll.classList.contains('hidden') && bRemove) || (elements.btnUpdateAll.classList.contains('hidden') && !bRemove)) {
+	if ( (!elements.btnUpdateAll.classList.contains('hidden') && bRemove) || (elements.btnUpdateAll.classList.contains('hidden') && !bRemove) ) {
 		let arr = document.getElementsByClassName('span_update');
 		let bHasNoUpdated = false;
 		for (let index = 0; index < arr.length; index++) {
@@ -1906,19 +1912,19 @@ function showSlides(n) {
 	let i;
 	let slides = document.getElementsByClassName('mySlides');
 	let dots = document.getElementsByClassName('dot');
-	if (n > slides.length) { slideIndex = 1 }
-	if (n < 1) { slideIndex = slides.length }
+	if (n > slides.length) {slideIndex = 1}    
+	if (n < 1) {slideIndex = slides.length}
 	for (i = 0; i < slides.length; i++) {
-		slides[i].style.display = "none";
+		slides[i].style.display = "none";  
 	}
 	for (i = 0; i < dots.length; i++) {
 		dots[i].className = dots[i].className.replace(' active', '');
 	}
 	if (slides.length)
-		slides[slideIndex - 1].style.display = "block";
+		slides[slideIndex-1].style.display = "block";
 
-	if (dots.length)
-		dots[slideIndex - 1].className += ' active';
+	if(dots.length)
+		dots[slideIndex-1].className += ' active';
 };
 
 function getMarkedSetting() {
@@ -1944,7 +1950,7 @@ function getMarkedSetting() {
 
 	for (let prop in defaults) {
 		if (!invalidOptions.includes(prop))
-			settings[prop] = defaults[prop]
+		settings[prop] = defaults[prop]
 	}
 
 	return settings;
